@@ -3,6 +3,14 @@
     participant browser
     participant server
 
+
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
+    activate server
+    server-->>browser: Redirects https://studies.cs.helsinki.fi/exampleapp/notes
+    deactivate server
+
+    Note right of browser: The form submission post the new payload to the server and then redirects to /notes page, finally the process of rendering the /notes pages start again
+
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
     activate server
     server-->>browser: HTML document
