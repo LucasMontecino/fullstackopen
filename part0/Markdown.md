@@ -1,14 +1,9 @@
 ```mermaid
     sequenceDiagram
-    participant user
-    participant button
     participant browser
     participant server
 
-    Note right of user: The user starts to type in the input text then click on the button to save the note
-
-    user->>button: Click on the button to save the note
-    activate button
+    Note right of browser: The user clicks on the button and send the data to the server
 
     browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note with form input payload
     activate server
