@@ -15,7 +15,7 @@
     server->>browser: Redirects to https://studies.cs.helsinki.fi/exampleapp/notes
     desactivate server
 
-     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
     activate server
     server-->>browser: the css file
     deactivate server
