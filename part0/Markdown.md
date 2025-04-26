@@ -12,7 +12,7 @@
 
     browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note with form input payload
     activate server
-    server->>browser: Redirects to https://studies.cs.helsinki.fi/exampleapp/notes
+    server-->>browser: Redirects to https://studies.cs.helsinki.fi/exampleapp/notes
     desactivate server
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
