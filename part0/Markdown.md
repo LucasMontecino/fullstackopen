@@ -1,21 +1,21 @@
 ```mermaid
     sequenceDiagram
+    participant user
+    participant button
     participant browser
     participant server
 
-    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
+    Note right of user: The user starts to type in the input text then click on the button to save the note
+
+    user->>button: Click on the button to save the note
+    activate button
+
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note with form input payload
     activate server
-    server-->>browser: Redirects https://studies.cs.helsinki.fi/exampleapp/notes
-    deactivate server
+    server->>browser: Redirects to https://studies.cs.helsinki.fi/exampleapp/notes
+    desativate server
 
-    Note right of browser: The form submission post the new payload to the server and then redirects to /notes page, finally the process of rendering the /notes pages start again
-
-    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
-    activate server
-    server-->>browser: HTML document
-    deactivate server
-
-    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
+     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
     activate server
     server-->>browser: the css file
     deactivate server
