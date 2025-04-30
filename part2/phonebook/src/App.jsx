@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
-import axios from 'axios';
+import personsService from './services/persons';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -32,37 +32,83 @@ const App = () => {
 
   const addName = (e) => {
     e.preventDefault();
+
     const findName = persons.find(
       (person) => person.name === newName
     );
+
     if (findName !== undefined) {
-      alert(
-        `${findName.name} is already added to phonebook`
+      const dialog = confirm(
+        `${findName.name} is already added to phonebook, replace the old number with a new one?`
       );
+      if (dialog) {
+        const changedPerson = {
+          ...findName,
+          number: newNumber,
+        };
+        personsService
+          .update(changedPerson.id, changedPerson)
+          .then((returnedPerson) => {
+            setPersons(
+              persons.map((person) =>
+                person.id === changedPerson.id
+                  ? returnedPerson
+                  : person
+              )
+            );
+            setNewName('');
+            setNewNumber('');
+          });
+      }
       return;
     }
-    let newId = persons[persons.length - 1].id;
+
     const newObject = {
-      id: (newId += 1),
       name: newName,
       number: newNumber,
     };
-    setPersons(persons.concat(newObject));
-    setNewName('');
-    setNewNumber('');
+
+    personsService
+      .create(newObject)
+      .then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName('');
+        setNewNumber('');
+      });
+  };
+
+  const deletedPerson = (resource) => {
+    const dialog = confirm(`Delete ${resource.name} ?`);
+
+    if (dialog) {
+      personsService
+        .deleteResourse(resource.id)
+        .then((returnedPerson) => {
+          setPersons(
+            persons.filter(
+              (person) => person.id !== resource.id
+            )
+          );
+          alert(
+            `${returnedPerson.name} was deleted successfully!`
+          );
+        })
+        .catch((error) => {
+          console.log({ message: error.message });
+        });
+    }
   };
 
   useEffect(() => {
-    console.log('effect');
-    axios
-      .get('http://localhost:3001/persons')
-      .then((response) => {
-        console.log('promise fulfilled');
-        setPersons(response.data);
+    personsService
+      .getAll()
+      .then((initialPersons) => {
+        setPersons(initialPersons);
+      })
+      .catch((error) => {
+        console.error({ message: error.message });
       });
   }, []);
-
-  console.log('rendering...', persons.length, 'persons');
 
   return (
     <div>
@@ -78,7 +124,10 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h3>Numbers</h3>
-      <Persons persons={showPersons} />
+      <Persons
+        persons={showPersons}
+        deletedPerson={deletedPerson}
+      />
     </div>
   );
 };
