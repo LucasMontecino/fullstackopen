@@ -40,56 +40,6 @@ const App = () => {
   const addName = (e) => {
     e.preventDefault();
 
-    const findName = persons.find(
-      (person) => person.name === newName
-    );
-
-    if (findName !== undefined) {
-      const dialog = confirm(
-        `${findName.name} is already added to phonebook, replace the old number with a new one?`
-      );
-      if (dialog) {
-        const changedPerson = {
-          ...findName,
-          number: newNumber,
-        };
-        personsService
-          .update(changedPerson.id, changedPerson)
-          .then((returnedPerson) => {
-            setPersons(
-              persons.map((person) =>
-                person.id === changedPerson.id
-                  ? returnedPerson
-                  : person
-              )
-            );
-            setNotificationMessage(
-              `${returnedPerson.name} updated!`
-            );
-            setTimeout(() => {
-              setNotificationMessage(null);
-            }, 5000);
-            setNewName('');
-            setNewNumber('');
-          })
-          .catch((error) => {
-            console.error({ message: error.message });
-            setErrors(
-              `Information of ${changedPerson.name} was deleted from server!`
-            );
-            setTimeout(() => {
-              setErrors(null);
-              setPersons(
-                persons.filter(
-                  (person) => person.id !== changedPerson.id
-                )
-              );
-            }, 5000);
-          });
-      }
-      return;
-    }
-
     const newObject = {
       name: newName,
       number: newNumber,
@@ -111,19 +61,20 @@ const App = () => {
   };
 
   const deletedPerson = (resource) => {
+    const deletedPerson = { ...resource };
     const dialog = confirm(`Delete ${resource.name} ?`);
 
     if (dialog) {
       personsService
         .deleteResourse(resource.id)
-        .then((returnedPerson) => {
+        .then(() => {
           setPersons(
             persons.filter(
               (person) => person.id !== resource.id
             )
           );
           alert(
-            `${returnedPerson.name} was deleted successfully!`
+            `${deletedPerson.name} was deleted successfully!`
           );
         })
         .catch((error) => {
