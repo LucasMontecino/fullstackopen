@@ -67,20 +67,39 @@ app.get('/api/persons', (request, response) => {
   });
 });
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
   const { id } = request.params;
 
-  Person.findById(id).then((person) => {
-    response.json(person);
-  });
+  Person.findById(id)
+    .then((person) => {
+      if (person) {
+        return response.json(person);
+      } else {
+        return response
+          .status(404)
+          .send({ error: 'person not found' });
+      }
+    })
+    .catch((error) => next(error));
 });
 
-app.delete('/api/persons/:id', (request, response) => {
-  const { id } = request.params;
-  Person.deleteOne({ _id: id }).then((result) => {
-    response.status(204).end();
-  });
-});
+app.delete(
+  '/api/persons/:id',
+  (request, response, next) => {
+    const { id } = request.params;
+    Person.findByIdAndDelete(id)
+      .then((result) => {
+        if (result) {
+          return response.status(204).end();
+        } else {
+          return response
+            .status(404)
+            .send({ error: 'person not found' });
+        }
+      })
+      .catch((error) => next(error));
+  }
+);
 
 app.post('/api/persons', (request, response) => {
   const { name, number } = request.body;
@@ -99,6 +118,27 @@ app.post('/api/persons', (request, response) => {
   });
 });
 
+app.put('/api/persons/:name', (request, response, next) => {
+  const { number } = request.body;
+  const { name } = request.params;
+
+  Person.findOne({ name })
+    .then((person) => {
+      if (!person) {
+        return response
+          .status(404)
+          .send({ error: 'person not found' });
+      }
+
+      person.number = number;
+
+      person.save().then((updatedPerson) => {
+        return response.json(updatedPerson);
+      });
+    })
+    .catch((error) => next(error));
+});
+
 app.get('/info', (request, response) => {
   const now = new Date();
   const currentDateTimeString = now.toString();
@@ -107,6 +147,20 @@ app.get('/info', (request, response) => {
         <p>${currentDateTimeString}</p>    
     `);
 });
+
+const errorHandler = (error, req, res, next) => {
+  console.error(error.message);
+
+  if (error.name === 'CastError') {
+    return res
+      .status(400)
+      .send({ error: 'malformatted id' });
+  }
+
+  next(error);
+};
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(
