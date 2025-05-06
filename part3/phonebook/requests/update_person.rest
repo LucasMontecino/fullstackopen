@@ -1,0 +1,6 @@
+PUT http://localhost:3001/api/persons/Lautaro%20Martinez
+Content-Type: application/json
+
+{
+    "number": 22222
+}
