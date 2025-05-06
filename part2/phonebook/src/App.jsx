@@ -40,6 +40,37 @@ const App = () => {
   const addName = (e) => {
     e.preventDefault();
 
+    const findPerson = persons.find(
+      (person) =>
+        person.name.toLowerCase() === newName.toLowerCase()
+    );
+
+    if (findPerson) {
+      const dialog = confirm(
+        `${findPerson.name} exists in the db, do you want to update the number?`
+      );
+      if (dialog) {
+        personsService
+          .update(findPerson.name, { number: newNumber })
+          .then((returnedPerson) => {
+            setPersons(
+              persons.map((p) =>
+                p.id === findPerson.id ? returnedPerson : p
+              )
+            );
+            setNotificationMessage(
+              `${returnedPerson.name} updated!`
+            );
+            setTimeout(() => {
+              setNotificationMessage(null);
+            }, 5000);
+            setNewName('');
+            setNewNumber('');
+          });
+      }
+      return;
+    }
+
     const newObject = {
       name: newName,
       number: newNumber,
