@@ -1,5 +1,8 @@
+require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
+const Person = require('./models/person');
+const PORT = process.env.PORT;
 
 let persons = [
   {
@@ -59,55 +62,25 @@ app.get('/', (request, response) => {
 });
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons);
+  Person.find({}).then((persons) => {
+    response.json(persons);
+  });
 });
 
 app.get('/api/persons/:id', (request, response) => {
   const { id } = request.params;
 
-  const person = persons.find((p) => p.id === id);
-
-  if (!person) {
-    return response.status(404).json({
-      error: `Person with id: ${id} doesn't found.`,
-    });
-  }
-
-  response.json(person);
+  Person.findById(id).then((person) => {
+    response.json(person);
+  });
 });
 
 app.delete('/api/persons/:id', (request, response) => {
   const { id } = request.params;
-  if (!id)
-    return response
-      .status(400)
-      .json({ error: 'Please provide an id.' });
-
-  const person = persons.find((p) => p.id === id);
-
-  if (!person) {
-    return response.status(404).json({
-      error: `Person with id: ${id} doesn't found.`,
-    });
-  }
-
-  persons = persons.filter((p) => p.id !== id);
-
-  response.status(204).end();
+  Person.deleteOne({ _id: id }).then((result) => {
+    response.status(204).end();
+  });
 });
-
-const generateRandomId = (length = 10) => {
-  const characters =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  const charactersLength = characters.length;
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(
-      Math.floor(Math.random() * charactersLength)
-    );
-  }
-  return result;
-};
 
 app.post('/api/persons', (request, response) => {
   const { name, number } = request.body;
@@ -116,23 +89,14 @@ app.post('/api/persons', (request, response) => {
       error: 'You must provide a name and a number',
     });
 
-  const person = persons.find(
-    (p) => p.name.toLowerCase() === name.toLowerCase()
-  );
-
-  if (person)
-    return response
-      .status(400)
-      .json({ error: 'Name must be unique' });
-
-  const newPerson = {
-    id: generateRandomId(),
+  const newPerson = new Person({
     name,
     number: String(number),
-  };
+  });
 
-  persons = persons.concat(newPerson);
-  response.status(201).json(newPerson);
+  newPerson.save().then((person) => {
+    response.status(201).json(person);
+  });
 });
 
 app.get('/info', (request, response) => {
@@ -144,8 +108,7 @@ app.get('/info', (request, response) => {
     `);
 });
 
-const PORT = process.env.PORT || 3001;
-app.listen(3001, () => {
+app.listen(PORT, () => {
   console.log(
     `Server running on port http://localhost:${PORT}`
   );
