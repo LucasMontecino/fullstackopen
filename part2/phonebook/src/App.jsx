@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
@@ -10,6 +10,8 @@ const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
+
+  const inputRef = useRef(null);
 
   const [notificationMessage, setNotificationMessage] =
     useState(null);
@@ -66,6 +68,16 @@ const App = () => {
             }, 5000);
             setNewName('');
             setNewNumber('');
+            inputRef.current?.focus();
+          })
+          .catch((error) => {
+            console.error({
+              error: error.response.data.error,
+            });
+            setErrors(error.response.data.error);
+            setTimeout(() => {
+              setErrors(null);
+            }, 5000);
           });
       }
       return;
@@ -88,6 +100,17 @@ const App = () => {
         }, 5000);
         setNewName('');
         setNewNumber('');
+        inputRef.current?.focus();
+      })
+      .catch((error) => {
+        console.error({ error: error.response.data.error });
+        setErrors(error.response.data.error);
+        setTimeout(() => {
+          setErrors(null);
+        }, 5000);
+        setNewName('');
+        setNewNumber('');
+        inputRef.current?.focus();
       });
   };
 
@@ -153,6 +176,7 @@ const App = () => {
         handleNameChange={handleNameChange}
         newNumber={newNumber}
         handleNumberChange={handleNumberChange}
+        inputRef={inputRef}
       />
       <h3>Numbers</h3>
       <Persons
