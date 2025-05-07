@@ -38,7 +38,7 @@ app.use(express.static('dist'));
 
 app.use(
   morgan('tiny', {
-    skip: function (req, res) {
+    skip: function (req) {
       return req.method === 'POST';
     },
   })
@@ -46,9 +46,9 @@ app.use(
 
 app.use(
   morgan(
-    `:method :url :status :res[content-length] - :response-time ms :post`,
+    ':method :url :status :res[content-length] - :response-time ms :post',
     {
-      skip: function (req, res) {
+      skip: function (req) {
         return req.method !== 'POST';
       },
     }
@@ -57,7 +57,7 @@ app.use(
 
 app.get('/', (request, response) => {
   response.send(
-    `<h1 style="text-align:center;font:900 2rem 'Trebuchet MS',Tahoma,sans-serif;">Hello World</h1>`
+    '<h1 style="text-align:center;font:900 2rem \'Trebuchet MS\',Tahoma,sans-serif;">Hello World</h1>'
   );
 });
 
