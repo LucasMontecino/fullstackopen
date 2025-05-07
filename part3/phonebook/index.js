@@ -101,21 +101,20 @@ app.delete(
   }
 );
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const { name, number } = request.body;
-  if (!name || !number)
-    return response.status(400).json({
-      error: 'You must provide a name and a number',
-    });
 
   const newPerson = new Person({
     name,
     number: String(number),
   });
 
-  newPerson.save().then((person) => {
-    response.status(201).json(person);
-  });
+  newPerson
+    .save()
+    .then((person) => {
+      response.status(201).json(person);
+    })
+    .catch((error) => next(error));
 });
 
 app.put('/api/persons/:name', (request, response, next) => {
@@ -132,9 +131,12 @@ app.put('/api/persons/:name', (request, response, next) => {
 
       person.number = number;
 
-      person.save().then((updatedPerson) => {
-        return response.json(updatedPerson);
-      });
+      person
+        .save()
+        .then((updatedPerson) => {
+          return response.json(updatedPerson);
+        })
+        .catch((error) => next(error));
     })
     .catch((error) => next(error));
 });
@@ -155,6 +157,8 @@ const errorHandler = (error, req, res, next) => {
     return res
       .status(400)
       .send({ error: 'malformatted id' });
+  } else if (error.name === 'ValidationError') {
+    return res.status(400).json({ error: error.message });
   }
 
   next(error);
