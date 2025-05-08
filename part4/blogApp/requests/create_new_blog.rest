@@ -2,8 +2,8 @@ POST http://localhost:3001/api/blogs
 Content-Type: application/json
 
 {
-    "title": "Nice day",
-    "author": "Juan Andres",
+    "title": "Yesterday all my troubles seemed so far away",
+    "author": "Paulo Montes",
     "url": "",
-    "likes": 387
+    "likes": 568
 }
