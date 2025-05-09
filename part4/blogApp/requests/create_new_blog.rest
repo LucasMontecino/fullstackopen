@@ -2,8 +2,7 @@ POST http://localhost:3001/api/blogs
 Content-Type: application/json
 
 {
-    "title": "Imagine",
-    "author": "Jo",
-    "url": "",
-    "likes": 645
+    "title": "My Sweet Lord",
+    "author": "George Harrison",
+    "url": "https://www.youtube.com/watch?v=XWTvkcHlOPQ&ab_channel=GeorgeHarrison-Topic"
 }
