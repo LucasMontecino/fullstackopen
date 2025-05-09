@@ -2,7 +2,8 @@ POST http://localhost:3001/api/blogs
 Content-Type: application/json
 
 {
-    "title": "My Sweet Lord",
-    "author": "George Harrison",
-    "url": "https://www.youtube.com/watch?v=XWTvkcHlOPQ&ab_channel=GeorgeHarrison-Topic"
+    "title": "With a little help from my friends",
+    "author": "The beatles",
+    "url": "/wlhfbeatles",
+    "likes": 200
 }
