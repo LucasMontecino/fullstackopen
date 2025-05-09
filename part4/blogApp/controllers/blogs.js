@@ -25,7 +25,25 @@ blogsRouter.delete('/:id', async (request, response) => {
     return response
       .status(404)
       .send(`No resource find with id ${id}`);
-  else return response.status(204).end;
+  else return response.status(204).end();
+});
+
+blogsRouter.put('/:id', async (request, response) => {
+  const { id } = request.params;
+  const { likes } = request.body;
+
+  const blog = await Blog.findById(id);
+
+  if (!blog)
+    return response
+      .status(404)
+      .send('No resource find with that id');
+
+  blog.likes = likes;
+
+  const updatedBlog = await blog.save();
+
+  return response.json(updatedBlog);
 });
 
 module.exports = blogsRouter;
