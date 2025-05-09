@@ -1,3 +1,4 @@
+require('express-async-errors');
 const config = require('./utils/config');
 const express = require('express');
 const mongoose = require('mongoose');
@@ -6,6 +7,8 @@ const middleware = require('./utils/middleware');
 const blogsRouter = require('./controllers/blogs');
 
 const app = express();
+
+mongoose.set('strictQuery', false);
 
 const mongoUrl = config.MONGODB_URI;
 mongoose
