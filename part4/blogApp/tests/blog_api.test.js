@@ -47,7 +47,7 @@ test('a specific blog is within the returned blogs', async () => {
 });
 
 test('a valid blog can be added', async () => {
-  const newBlogs = {
+  const newBlog = {
     title: 'Always separate app and server files!',
     author: 'Nermine Slimane',
     url: 'https://dev.to/nermine-slimane/always-separate-app-and-server-files--1nc7',
@@ -56,7 +56,7 @@ test('a valid blog can be added', async () => {
 
   await api
     .post('/api/blogs')
-    .send(newBlogs)
+    .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/);
 
@@ -70,6 +70,44 @@ test('a valid blog can be added', async () => {
   const titles = blogsAtEnd.map((b) => b.title);
   assert(
     titles.includes('Always separate app and server files!')
+  );
+});
+
+test('added a new blog without likes gives a value of zero', async () => {
+  const newBlog = {
+    title: 'Clean Architecture on Frontend',
+    author: 'Alex Bespoyasov',
+    url: 'https://dev.to/bespoyasov/clean-architecture-on-frontend-4311',
+  };
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/);
+
+  const blogsAtEnd = await helper.blogsInDb();
+  const blogToView = blogsAtEnd.at(-1);
+
+  assert.strictEqual(blogToView.likes, 0);
+});
+
+test('attempted add a blog without title or url is forbidden', async () => {
+  const newBlog = {
+    author: 'Lucas',
+    likes: 300,
+  };
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+    .expect('Content-Type', /application\/json/);
+
+  const blogsAtEnd = await helper.blogsInDb();
+  assert.strictEqual(
+    blogsAtEnd.length,
+    helper.initialBlogs.length
   );
 });
 
