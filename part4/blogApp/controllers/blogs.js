@@ -1,6 +1,7 @@
 const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
 const User = require('../models/user');
+const middleware = require('../utils/middleware');
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', {
@@ -10,80 +11,88 @@ blogsRouter.get('/', async (request, response) => {
   return response.json(blogs);
 });
 
-blogsRouter.post('/', async (request, response) => {
-  const { title, author, url } = request.body;
-  let { likes } = request.body;
+blogsRouter.post(
+  '/',
+  middleware.userExtractor,
+  async (request, response) => {
+    const { title, author, url } = request.body;
+    let { likes } = request.body;
 
-  if (!likes) {
-    likes = 0;
+    if (!likes) {
+      likes = 0;
+    }
+
+    const decodedUser = request.user;
+
+    if (!decodedUser.id)
+      return response
+        .status(401)
+        .json({ error: 'token invalid' });
+
+    const user = await User.findById(decodedUser.id);
+
+    if (!user)
+      return response
+        .status(401)
+        .json({ error: 'userId missing or not valid' });
+
+    const blog = new Blog({
+      title,
+      author,
+      url,
+      likes,
+      user: user._id,
+    });
+
+    const savedBlog = await blog.save();
+    user.blogs = user.blogs.concat(savedBlog._id);
+    await user.save();
+
+    return response.status(201).json(savedBlog);
   }
+);
 
-  const decodedUser = request.user;
+blogsRouter.delete(
+  '/:id',
+  middleware.userExtractor,
+  async (request, response) => {
+    const { id } = request.params;
 
-  if (!decodedUser.id)
-    return response
-      .status(401)
-      .json({ error: 'token invalid' });
+    const decodedUser = request.user;
 
-  const user = await User.findById(decodedUser.id);
+    if (!decodedUser.id)
+      return response
+        .status(401)
+        .json({ error: 'token invalid' });
 
-  if (!user)
-    return response
-      .status(401)
-      .json({ error: 'userId missing or not valid' });
+    const blog = await Blog.findById(id);
+    const user = await User.findById(decodedUser.id);
 
-  const blog = new Blog({
-    title,
-    author,
-    url,
-    likes,
-    user: user._id,
-  });
+    if (!user)
+      return response
+        .status(401)
+        .json({ error: 'userId missing or not valid' });
 
-  const savedBlog = await blog.save();
-  user.blogs = user.blogs.concat(savedBlog._id);
-  await user.save();
+    if (blog.user.toString() !== decodedUser.id.toString())
+      return response
+        .status(401)
+        .json({ error: 'token invalid' });
 
-  return response.status(201).json(savedBlog);
-});
+    const deletedBlog = await Blog.findByIdAndDelete(id);
 
-blogsRouter.delete('/:id', async (request, response) => {
-  const { id } = request.params;
+    user.blogs = user.blogs.filter(
+      (blog) => blog.toString() !== id.toString()
+    );
 
-  const decodedUser = request.user;
+    await user.save();
 
-  if (!decodedUser.id)
-    return response
-      .status(401)
-      .json({ error: 'token invalid' });
-
-  const blog = await Blog.findById(id);
-  const user = await User.findById(decodedUser.id);
-
-  if (!user)
-    return response
-      .status(401)
-      .json({ error: 'userId missing or not valid' });
-
-  if (blog.user.toString() !== decodedUser.id.toString())
-    return response
-      .status(401)
-      .json({ error: 'token invalid' });
-
-  const deletedBlog = await Blog.findByIdAndDelete(id);
-
-  user.blogs = user.blogs.filter(
-    (blog) => blog.toString() !== id.toString()
-  );
-
-  await user.save();
-
-  if (!deletedBlog)
-    return response
-      .status(404)
-      .send(`No resource find with id ${id}`);
-  else return response.status(204).end();
-});
+    if (!deletedBlog)
+      return response
+        .status(404)
+        .send(`No resource find with id ${id}`);
+    else return response.status(204).end();
+  }
+);
 
 blogsRouter.put('/:id', async (request, response) => {
   const { id } = request.params;
