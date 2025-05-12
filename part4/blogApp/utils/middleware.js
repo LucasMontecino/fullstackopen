@@ -28,7 +28,9 @@ const userExtractor = (req, res, next) => {
   if (req.token) {
     req.user = jwt.verify(req.token, config.SECRET);
   } else {
-    req.user = null;
+    return res
+      .status(401)
+      .json({ error: 'you must provide a token' });
   }
 
   next();
