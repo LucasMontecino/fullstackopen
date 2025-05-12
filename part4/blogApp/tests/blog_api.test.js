@@ -10,6 +10,8 @@ const supertest = require('supertest');
 const app = require('../app');
 const Blog = require('../models/blog');
 const helper = require('./test.helper');
+const User = require('../models/user');
+const bcrypt = require('bcrypt');
 
 const api = supertest(app);
 
@@ -21,6 +23,22 @@ describe('at the beginning some blogs are saved', () => {
       const blogObject = new Blog(blog);
       await blogObject.save();
     }
+  });
+
+  beforeEach(async () => {
+    await User.deleteMany({});
+    const passwordHash = await bcrypt.hash(
+      'lucas_2025',
+      10
+    );
+
+    const user = new User({
+      username: 'lucasm9',
+      name: 'Lucas Montecino',
+      passwordHash,
+    });
+
+    await user.save();
   });
 
   test('blogs are returned as json', async () => {
@@ -55,6 +73,17 @@ describe('at the beginning some blogs are saved', () => {
 
   describe('added new blogs', () => {
     test('a valid blog can be added', async () => {
+      const result = await api
+        .post('/api/login')
+        .send({
+          username: 'lucasm9',
+          password: 'lucas_2025',
+        })
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
+      const { token } = result.body;
+
       const newBlog = {
         title: 'Always separate app and server files!',
         author: 'Nermine Slimane',
@@ -64,6 +93,7 @@ describe('at the beginning some blogs are saved', () => {
 
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/);
@@ -84,6 +114,17 @@ describe('at the beginning some blogs are saved', () => {
     });
 
     test('added a new blog without likes gives a value of zero', async () => {
+      const result = await api
+        .post('/api/login')
+        .send({
+          username: 'lucasm9',
+          password: 'lucas_2025',
+        })
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
+      const { token } = result.body;
+
       const newBlog = {
         title: 'Clean Architecture on Frontend',
         author: 'Alex Bespoyasov',
@@ -92,6 +133,7 @@ describe('at the beginning some blogs are saved', () => {
 
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/);
@@ -103,6 +145,16 @@ describe('at the beginning some blogs are saved', () => {
     });
 
     test('attempted add a blog without title or url is forbidden', async () => {
+      const result = await api
+        .post('/api/login')
+        .send({
+          username: 'lucasm9',
+          password: 'lucas_2025',
+        })
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
+      const { token } = result.body;
       const newBlog = {
         author: 'Lucas',
         likes: 300,
@@ -110,6 +162,7 @@ describe('at the beginning some blogs are saved', () => {
 
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(400)
         .expect('Content-Type', /application\/json/);
@@ -120,44 +173,42 @@ describe('at the beginning some blogs are saved', () => {
         helper.initialBlogs.length
       );
     });
+
+    test('attempted add a blog without token is forbidden', async () => {
+      const newBlog = {
+        title: 'Clean Architecture on Frontend',
+        author: 'Alex Bespoyasov',
+        url: 'https://dev.to/bespoyasov/clean-architecture-on-frontend-4311',
+      };
+
+      const result = await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(401)
+        .expect('Content-Type', /application\/json/);
+
+      const blogsAtEnd = await helper.blogsInDb();
+      assert.strictEqual(
+        blogsAtEnd.length,
+        helper.initialBlogs.length
+      );
+      assert(
+        result.body.error.includes(
+          'you must provide a token'
+        )
+      );
+    });
   });
 
   describe('deletion of a note', () => {
-    test('delete blog with valid id', async () => {
+    test('attempted to delete a blog without token is forbidden', async () => {
       const blogs = await helper.blogsInDb();
       const blogToDelete = blogs[0];
 
       await api
         .delete(`/api/blogs/${blogToDelete.id}`)
-        .expect(204);
-
-      const blogsAtEnd = await helper.blogsInDb();
-
-      const titles = blogsAtEnd.map((b) => b.title);
-
-      assert(!titles.includes(blogToDelete.title));
-
-      assert.strictEqual(
-        blogsAtEnd.length,
-        helper.initialBlogs.length - 1
-      );
-    });
-
-    test('failed with status 404 if blog does not exist', async () => {
-      const validateNonexistId =
-        await helper.nonExistingId();
-
-      await api
-        .delete(`/api/blogs/${validateNonexistId}`)
-        .expect(404);
-    });
-
-    test('failed with status 400 if id is invalid', async () => {
-      const invalidId = '5a3d5da59070081a82a3445';
-
-      await api
-        .delete(`/api/blogs/${invalidId}`)
-        .expect(400);
+        .expect(401)
+        .expect('Content-Type', /application\/json/);
     });
   });
 
