@@ -1,9 +1,10 @@
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBlcGVzYW5kIiwiaWQiOiI2ODIyMThlYzdiMzUwMTgxNjhjOTYwODAiLCJpYXQiOjE3NDcwNzYzNTd9.6LrGab4-3CX30XGAm3Ez5lDOkVlDm1phQDLMtanDS9o
 
 {
-    "title": "With a little help from my friends",
-    "author": "The beatles",
-    "url": "/wlhfbeatles",
-    "likes": 200
+    "title": "How to structure folders in your project",
+    "author": "Midudev",
+    "url": "https://www.linkedin.com/posts/midudev_c%C3%B3mo-estructurar-las-carpetas-de-tu-proyecto-ugcPost-7202333529743986688-rAYD/?utm_source=share&utm_medium=member_desktop",
+    "likes": 30
 }
