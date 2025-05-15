@@ -1,7 +1,10 @@
-PUT http://localhost:3001/api/blogs/681cb0bca3abd200a4ad6b0c
+PUT http://localhost:3001/api/blogs/6825d2bf7238dbe7af3b5a10
 Content-Type: application/json
 
+
 {
-    "url": "blog/juanandres",
-    "likes": 564
+    "likes": 2,
+    "author": "Midudev",
+    "title": "How to structure folders in your project",
+    "url": "https://www.linkedin.com/posts/midudev_c%C3%B3mo-estructurar-las-carpetas-de-tu-proyecto-ugcPost-7202333529743986688-rAYD/?utm_source=share&utm_medium=member_desktop.eyJ1c2VybmFtZSI6InBlcGVzYW5kIiwiaWQiOiI2ODIyMThlYzdiMzUwMTgxNjhjOTYwODAiLCJpYXQiOjE3NDczMDgyNzksImV4cCI6MTc0NzMxMTg3OX0.6baeHZEXU2EB81qNDK6vt8HQVixGLezzQmFS-3M_oug"
 }
