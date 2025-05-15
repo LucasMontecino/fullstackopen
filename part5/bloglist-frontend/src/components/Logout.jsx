@@ -1,8 +1,12 @@
+import Button from './Button';
+
 const Logout = ({ handleClick }) => {
   return (
-    <button type="button" onClick={handleClick}>
-      logout
-    </button>
+    <Button
+      type={'button'}
+      label={'logout'}
+      onClick={handleClick}
+    />
   );
 };
 
