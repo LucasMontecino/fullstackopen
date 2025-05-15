@@ -1,7 +1,7 @@
 import {
   useState,
-  forwardRef,
   useImperativeHandle,
+  forwardRef,
 } from 'react';
 import Button from './Button';
 
@@ -49,5 +49,7 @@ const Togglable = forwardRef(
     );
   }
 );
+
+Togglable.displayName = 'Togglable';
 
 export default Togglable;
