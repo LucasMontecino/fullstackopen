@@ -1,3 +1,4 @@
+import Button from './Button';
 import InputText from './InputText';
 
 const LoginForm = ({
@@ -25,10 +26,10 @@ const LoginForm = ({
         id={'password'}
         value={passwordValue}
         onChange={handleChange}
-        autoComplete={'password'}
+        autoComplete={'current-password'}
         type={'password'}
       />
-      <button type="submit">login</button>
+      <Button type={'submit'} label={'login'} />
     </form>
   );
 };
