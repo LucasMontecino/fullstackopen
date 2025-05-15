@@ -48,7 +48,18 @@ blogsRouter.post(
     user.blogs = user.blogs.concat(savedBlog._id);
     await user.save();
 
-    return response.status(201).json(savedBlog);
+    return response.status(201).json({
+      id: savedBlog._id.toString(),
+      title: savedBlog.title,
+      author: savedBlog.author,
+      url: savedBlog.url,
+      likes: savedBlog.likes,
+      user: {
+        id: user._id,
+        name: user.name,
+        username: user.username,
+      },
+    });
   }
 );
 
@@ -94,22 +105,54 @@ blogsRouter.delete(
   }
 );
 
-blogsRouter.put('/:id', async (request, response) => {
-  const { id } = request.params;
-  const { likes } = request.body;
+blogsRouter.put(
+  '/:id',
+  middleware.userExtractor,
+  async (request, response) => {
+    const { id } = request.params;
+    const { likes, author, title, url } = request.body;
 
-  const blog = await Blog.findById(id);
+    const decodedUser = request.user;
 
-  if (!blog)
-    return response
-      .status(404)
-      .send('No resource find with that id');
+    if (!decodedUser.id)
+      return response
+        .status(401)
+        .json({ error: 'token invalid' });
 
-  blog.likes = likes;
+    const blog = await Blog.findById(id);
+    if (!blog)
+      return response
+        .status(404)
+        .json({ error: 'blogId missing or not valid' });
+    const user = await User.findById(blog.user.toString());
 
-  const updatedBlog = await blog.save();
+    if (!user)
+      return response.status(401).json({
+        error: 'userId missing or not valid',
+      });
 
-  return response.json(updatedBlog);
-});
+    await blog.deleteOne();
+
+    const blogObject = new Blog({
+      likes,
+      author,
+      title,
+      url,
+      user: user._id,
+    });
+
+    const updatedBlog = await blogObject.save();
+
+    user.blogs = user.blogs.map((blog) =>
+      blog._id.toString() === id.toString()
+        ? updatedBlog._id
+        : blog
+    );
+
+    await user.save();
+
+    return response.json(updatedBlog);
+  }
+);
 
 module.exports = blogsRouter;
