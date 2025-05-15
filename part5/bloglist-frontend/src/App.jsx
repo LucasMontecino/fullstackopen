@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Blog from './components/Blog';
 import blogService from './services/blogs';
 import LoginForm from './components/LoginForm';
@@ -6,7 +6,8 @@ import loginService from './services/login';
 import NotificationMessage from './components/NotificationMessage';
 import Logout from './components/Logout';
 import CreateBlog from './components/CreateBlog';
-import SuccessMessage from './components/SuccessMessage';
+import Togglable from './components/Togglable';
+import Button from './components/Button';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -15,16 +16,16 @@ const App = () => {
     password: '',
   });
 
-  const [newBlog, setNewBlog] = useState({
-    title: '',
-    author: '',
-    url: '',
-  });
-
   const [user, setUser] = useState(null);
 
   const [notification, setNotification] = useState(null);
   const [errors, setErrors] = useState(null);
+
+  const blogFormRef = useRef();
+
+  const sortedBlogsByLikes = [...blogs].sort((a, b) =>
+    a.likes < b.likes ? 1 : -1
+  );
 
   const handleUserData = (e) => {
     setUserData((prev) => ({
@@ -47,9 +48,13 @@ const App = () => {
         username: '',
         password: '',
       });
+      setNotification('logged successfully!');
+      setTimeout(() => {
+        setNotification(null);
+      }, 5000);
     } catch (error) {
-      console.error({ message: error.message });
-      setErrors('wrong username or password');
+      console.error({ message: error.response.data.error });
+      setErrors(error.response.data.error);
       setTimeout(() => {
         setErrors(null);
       }, 5000);
@@ -61,25 +66,15 @@ const App = () => {
     window.localStorage.removeItem('loggedUser');
   };
 
-  const handleNewBlog = (e) => {
-    setNewBlog((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const handleAddBlog = async (e) => {
-    e.preventDefault();
+  const handleAddBlog = async (newBlog) => {
     setErrors(null);
     try {
       const entryBlog = await blogService.create(newBlog);
 
       setBlogs(blogs.concat(entryBlog));
-      setNewBlog({
-        title: '',
-        author: '',
-        url: '',
-      });
+
+      blogFormRef.current.toggleVisibility();
+
       setNotification(
         `a new blog ${entryBlog.title} by ${entryBlog.author} added`
       );
@@ -87,8 +82,66 @@ const App = () => {
         setNotification(null);
       }, 5000);
     } catch (error) {
-      console.error({ message: error.message });
-      setErrors(error.message);
+      console.error({ message: error.response.data.error });
+      setErrors(error.response.data.error);
+      setTimeout(() => {
+        setErrors(null);
+      }, 5000);
+    }
+  };
+
+  const updateBlog = async (id) => {
+    const findBlog = blogs.find((blog) => blog.id === id);
+    setErrors(null);
+    try {
+      const entryBlog = await blogService.update(id, {
+        ...findBlog,
+        likes: findBlog.likes + 1,
+      });
+
+      setBlogs(
+        blogs.map((blog) =>
+          blog.id === id
+            ? {
+                ...entryBlog,
+                user: findBlog.user,
+              }
+            : blog
+        )
+      );
+
+      setNotification(
+        `you successfully liked the blog ${entryBlog.title} by ${entryBlog.author}`
+      );
+      setTimeout(() => {
+        setNotification(null);
+      }, 5000);
+    } catch (error) {
+      console.error({ message: error.response.data.error });
+      setErrors(error.response.data.error);
+      setTimeout(() => {
+        setErrors(null);
+      }, 5000);
+    }
+  };
+
+  const deleteBlog = async (id) => {
+    const findBlog = blogs.find((blog) => blog.id === id);
+    try {
+      const dialog = confirm(
+        `Remove blog ${findBlog.title} by ${findBlog.author}`
+      );
+      if (dialog) {
+        await blogService.deleteItem(id);
+        setBlogs(blogs.filter((blog) => blog.id !== id));
+        setNotification('blog deleted successfully!');
+        setTimeout(() => {
+          setNotification(null);
+        }, 5000);
+      }
+    } catch (error) {
+      console.error({ message: error.response.data.error });
+      setErrors(error.response.data.error);
       setTimeout(() => {
         setErrors(null);
       }, 5000);
@@ -115,7 +168,7 @@ const App = () => {
 
   return (
     <div>
-      {user === null ? (
+      {!user ? (
         <div>
           <h2>log in to application</h2>
           <NotificationMessage
@@ -136,20 +189,37 @@ const App = () => {
             message={notification}
             type={''}
           />
-          <div>
-            {user.name} logged in
+          <NotificationMessage
+            type={'error'}
+            message={errors}
+          />
+          <div style={{ marginBottom: '1rem' }}>
+            {user.name} logged in -{' '}
             <Logout handleClick={handleLogout} />
           </div>
-          <CreateBlog
-            title={newBlog.title}
-            author={newBlog.author}
-            url={newBlog.url}
-            handleChange={handleNewBlog}
-            handleSubmit={handleAddBlog}
-          />
-          {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
-          ))}
+          <Togglable
+            buttonLabel={'create new blog'}
+            ref={blogFormRef}
+          >
+            <CreateBlog createBlog={handleAddBlog} />
+          </Togglable>
+          <div style={{ marginTop: '6px' }}>
+            {sortedBlogsByLikes.map((blog) => (
+              <Blog
+                key={blog.id}
+                blog={blog}
+                updateBlog={() => updateBlog(blog.id)}
+              >
+                {user.username === blog.user.username && (
+                  <Button
+                    type={'button'}
+                    label={'remove'}
+                    onClick={() => deleteBlog(blog.id)}
+                  />
+                )}
+              </Blog>
+            ))}
+          </div>
         </div>
       )}
     </div>
