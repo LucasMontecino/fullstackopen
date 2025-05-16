@@ -1,9 +1,15 @@
-const Button = ({ type, onClick = null, label }) => {
+const Button = ({
+  type,
+  onClick = null,
+  label,
+  testid,
+}) => {
   return (
     <button
       type={type}
       style={{ cursor: 'pointer' }}
       onClick={onClick}
+      data-testid={testid}
     >
       {label}
     </button>
