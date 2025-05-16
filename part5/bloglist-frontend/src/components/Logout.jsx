@@ -6,6 +6,7 @@ const Logout = ({ handleClick }) => {
       type={'button'}
       label={'logout'}
       onClick={handleClick}
+      testid={'logout'}
     />
   );
 };
