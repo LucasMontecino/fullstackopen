@@ -64,7 +64,11 @@ const CreateBlog = ({ createBlog }) => {
             type={'text'}
           />
         </div>
-        <Button type={'submit'} label={'create'} />
+        <Button
+          type={'submit'}
+          label={'create'}
+          testid={'create'}
+        />
       </form>
     </div>
   );
