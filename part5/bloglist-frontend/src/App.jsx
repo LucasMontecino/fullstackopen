@@ -11,10 +11,6 @@ import Button from './components/Button';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [userData, setUserData] = useState({
-    username: '',
-    password: '',
-  });
 
   const [user, setUser] = useState(null);
 
@@ -27,27 +23,15 @@ const App = () => {
     a.likes < b.likes ? 1 : -1
   );
 
-  const handleUserData = (e) => {
-    setUserData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const handleLogin = async (credentials) => {
     try {
-      const result = await loginService.login(userData);
+      const result = await loginService.login(credentials);
       window.localStorage.setItem(
         'loggedUser',
         JSON.stringify(result)
       );
       blogService.setToken(result.token);
       setUser(result);
-      setUserData({
-        username: '',
-        password: '',
-      });
       setNotification('logged successfully!');
       setTimeout(() => {
         setNotification(null);
@@ -175,12 +159,7 @@ const App = () => {
             type={'error'}
             message={errors}
           />
-          <LoginForm
-            usernameValue={userData.username}
-            passwordValue={userData.password}
-            handleChange={handleUserData}
-            handleSubmit={handleLogin}
-          />
+          <LoginForm handleSubmit={handleLogin} />
         </div>
       ) : (
         <div>
