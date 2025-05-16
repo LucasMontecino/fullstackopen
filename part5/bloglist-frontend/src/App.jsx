@@ -159,7 +159,7 @@ const App = () => {
             type={'error'}
             message={errors}
           />
-          <LoginForm handleSubmit={handleLogin} />
+          <LoginForm handleLogin={handleLogin} />
         </div>
       ) : (
         <div>
