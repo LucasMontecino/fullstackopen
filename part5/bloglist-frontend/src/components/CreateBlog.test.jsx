@@ -20,7 +20,6 @@ describe('<CreateBlog />', () => {
     await user.type(author, 'John Doe');
     await user.type(url, 'example.com');
     await user.click(sendButton);
-    console.log(createBlog.mock.calls);
     expect(createBlog.mock.calls).toHaveLength(1);
     expect(createBlog.mock.calls[0][0].title).toBe(
       'new blog...'
