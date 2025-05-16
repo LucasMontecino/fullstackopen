@@ -1,22 +1,40 @@
+import { useState } from 'react';
 import Button from './Button';
 import InputText from './InputText';
 import PropTypes from 'prop-types';
 
-const LoginForm = ({
-  usernameValue,
-  passwordValue,
-  handleChange,
-  handleSubmit,
-}) => {
+const LoginForm = ({ handleLogin }) => {
+  const [userData, setUserData] = useState({
+    username: '',
+    password: '',
+  });
+
+  const handleUserData = (e) => {
+    setUserData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const loginUser = async (e) => {
+    e.preventDefault();
+    await handleLogin(userData);
+
+    setUserData({
+      username: '',
+      password: '',
+    });
+  };
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={loginUser}>
       <InputText
         htmlFor={'username'}
         label={'username'}
         name={'username'}
         id={'username'}
-        value={usernameValue}
-        onChange={handleChange}
+        value={userData.username}
+        onChange={handleUserData}
         autoComplete={'username'}
         type={'text'}
       />
@@ -25,21 +43,22 @@ const LoginForm = ({
         label={'password'}
         name={'password'}
         id={'password'}
-        value={passwordValue}
-        onChange={handleChange}
+        value={userData.password}
+        onChange={handleUserData}
         autoComplete={'current-password'}
         type={'password'}
       />
-      <Button type={'submit'} label={'login'} />
+      <Button
+        type={'submit'}
+        label={'login'}
+        testid={'submit-login'}
+      />
     </form>
   );
 };
 
 LoginForm.propTypes = {
-  usernameValue: PropTypes.string.isRequired,
-  passwordValue: PropTypes.string.isRequired,
-  handleChange: PropTypes.func.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
+  handleLogin: PropTypes.func.isRequired,
 };
 
 export default LoginForm;
