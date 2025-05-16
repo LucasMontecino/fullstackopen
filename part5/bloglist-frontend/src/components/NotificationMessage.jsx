@@ -1,4 +1,4 @@
-const NotifcationMessage = ({ message, type }) => {
+const NotificationMessage = ({ message, type }) => {
   return (
     message !== null && (
       <p
@@ -10,6 +10,7 @@ const NotifcationMessage = ({ message, type }) => {
           backgroundColor: 'lightgrey',
           padding: '6px',
         }}
+        className="notification"
       >
         {message}
       </p>
@@ -17,4 +18,4 @@ const NotifcationMessage = ({ message, type }) => {
   );
 };
 
-export default NotifcationMessage;
+export default NotificationMessage;
