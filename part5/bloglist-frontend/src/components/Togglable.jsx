@@ -4,6 +4,7 @@ import {
   forwardRef,
 } from 'react';
 import Button from './Button';
+import PropTypes from 'prop-types';
 
 const Togglable = forwardRef(
   ({ buttonLabel, children }, refs) => {
@@ -25,6 +26,7 @@ const Togglable = forwardRef(
           type={'button'}
           label={buttonLabel}
           onClick={toggleVisibility}
+          testid={'show'}
         />
       );
     }
@@ -44,6 +46,7 @@ const Togglable = forwardRef(
           type={'button'}
           label={'cancel'}
           onClick={toggleVisibility}
+          testid={'cancel'}
         />
       </div>
     );
@@ -51,5 +54,9 @@ const Togglable = forwardRef(
 );
 
 Togglable.displayName = 'Togglable';
+
+Togglable.propTypes = {
+  buttonLabel: PropTypes.string.isRequired,
+};
 
 export default Togglable;
