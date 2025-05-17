@@ -154,7 +154,9 @@ const App = () => {
     <div>
       {!user ? (
         <div>
-          <h2>log in to application</h2>
+          <h2 className="login-title">
+            log in to application
+          </h2>
           <NotificationMessage
             type={'error'}
             message={errors}
@@ -189,7 +191,7 @@ const App = () => {
                 blog={blog}
                 updateBlog={() => updateBlog(blog.id)}
               >
-                {user.username === blog.user.username && (
+                {user.username === blog?.user?.username && (
                   <Button
                     type={'button'}
                     label={'remove'}
