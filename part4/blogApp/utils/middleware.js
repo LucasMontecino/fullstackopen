@@ -56,7 +56,7 @@ const errorHandler = (error, req, res, next) => {
     return res.status(401).json({ error: 'token invalid' });
   }
 
-  next(error);
+  next({ error: error.message });
 };
 
 module.exports = {
