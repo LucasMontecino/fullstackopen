@@ -1,0 +1,144 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body,
+.btn,
+input {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    background-color: #242526;
+    color: #fff;
+}
+
+header {
+    padding: 17px 0;
+}
+
+header h1 {
+    font-size: 17px;
+}
+
+h2 {
+    text-transform: capitalize;
+    font-size: 51px;
+    margin: 0 0 17px;
+}
+
+a {
+    text-decoration: none;
+    color: #ba8fff;
+}
+
+ul {
+    list-style-type: none;
+}
+
+li {
+    line-height: 1.5;
+    margin-bottom: 17px;
+    width: 80%;
+}
+
+form {
+    width: 100%;
+}
+
+input {
+    background-color: #1b1b1d;
+    border-radius: 8.5px;
+    padding: 10px;
+    font-size: 25px;
+    width: 100%;
+    margin-bottom: 21px;
+    font-weight: 500;
+    color: #fff;
+    border-color: transparent
+}
+
+input:focus {
+    outline: 3px solid #fff;
+}
+
+/* specific styles */
+
+.container {
+    margin: 0 auto;
+    width: 80%;
+    max-width: 600px;
+    padding-left: 17px;
+    padding-right: 17px;
+}
+
+.row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.anecdote-form {
+    padding: 68px 0;
+    background-color: #593d88;
+}
+
+.btn {
+    color: #1c1e21;
+    cursor: pointer;
+    background-color: #ebedf0;
+    font-weight: 700;
+    text-transform: capitalize;
+    border-color: transparent;
+    border-radius: 6px;
+    transition: opacity .2s ease-in-out;
+}
+
+.btn:hover {
+    opacity: .8;
+}
+
+.btn-sm {
+    padding: 2px 12px;
+    margin-left: 12px;
+}
+
+.btn-md {
+    padding: 8px 30px;
+    font-size: 17px;
+}
+
+.anecdotes-title,
+.anecdotes-list {
+    color: #c4c9ce;
+}
+
+.anecdotes {
+    padding: 34px 17px 0;
+}
+
+.anecdote-secondary {
+    display: flex;
+    align-items: center;
+}
+
+.votes {
+    color: #ba8fff;
+}
+
+.notification {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: left;
+
+    width: 60%;
+    margin-top: 17px;
+    font-weight: 500;
+    padding: 8px 12px;
+    background-color: #c4c9ce;
+    color: #229954;
+    border: 3px solid #229954;
+    border-radius: 6px;
+}
