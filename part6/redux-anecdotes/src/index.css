@@ -115,7 +115,8 @@ input:focus {
 }
 
 .anecdotes {
-    padding: 34px 17px 0;
+    padding: 34px 17px;
+    min-height: 100vh;
 }
 
 .anecdote-secondary {
@@ -141,4 +142,12 @@ input:focus {
     color: #229954;
     border: 3px solid #229954;
     border-radius: 6px;
+}
+
+.input-filter {
+    background-color: #ba8fff;
+}
+
+.input-filter::placeholder {
+    color: rgba(255, 255, 255, 0.7);
 }
