@@ -129,12 +129,12 @@ input:focus {
 }
 
 .notification {
-    position: absolute;
+    position: fixed;
     left: 50%;
     transform: translateX(-50%);
     text-align: left;
 
-    width: 60%;
+    width: 40%;
     margin-top: 17px;
     font-weight: 500;
     padding: 8px 12px;
