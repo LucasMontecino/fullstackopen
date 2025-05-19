@@ -1,23 +1,18 @@
-export const notificationReducer = (state = '', action) => {
-  switch (action.type) {
-    case 'SET_NOTIFICATION':
+import { createSlice } from '@reduxjs/toolkit';
+
+const notificationSlice = createSlice({
+  name: 'notification',
+  initialState: '',
+  reducers: {
+    setNotification(state, action) {
       return action.payload;
-    case 'CLEAR_NOTIFICATION':
+    },
+    clearNotification() {
       return '';
-    default:
-      return state;
-  }
-};
+    },
+  },
+});
 
-export const setNotification = (message) => {
-  return {
-    type: 'SET_NOTIFICATION',
-    payload: message,
-  };
-};
-
-export const clearNotification = () => {
-  return {
-    type: 'CLEAR_NOTIFICATION',
-  };
-};
+export const { setNotification, clearNotification } =
+  notificationSlice.actions;
+export default notificationSlice.reducer;
