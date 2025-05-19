@@ -4,21 +4,25 @@ import {
   clearNotification,
   setNotification,
 } from '../reducers/notificationReducer';
+import anecdoteService from '../services/anecdotes';
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch();
 
-  const addAnecdote = (e) => {
+  const addAnecdote = async (e) => {
     e.preventDefault();
     const content = e.target.anecdote.value;
     e.target.anecdote.value = '';
-    dispatch(createAnecdote(content));
+    const newAnecdote = await anecdoteService.create(
+      content
+    );
+    dispatch(createAnecdote(newAnecdote));
     dispatch(
       setNotification('New note created successfully!')
     );
     setTimeout(() => {
       dispatch(clearNotification());
-    }, 3000);
+    }, 5000);
   };
 
   return (
