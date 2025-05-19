@@ -1,12 +1,21 @@
 import AnecdoteForm from './components/AnecdoteForm';
 import AnecdoteList from './components/AnecdoteList';
 import Notification from './components/Notification';
-import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import anecdoteService from './services/anecdotes';
+import { useEffect } from 'react';
+import { setAnecdotes } from './reducers/anecdoteReducer';
 
 const App = () => {
-  const notification = useSelector(
-    (state) => state.notification
-  );
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    (async () => {
+      const anecdotes = await anecdoteService.getAll();
+      dispatch(setAnecdotes(anecdotes));
+    })();
+  }, []);
+
   return (
     <div>
       <header className="container">
@@ -15,9 +24,7 @@ const App = () => {
         </h1>
       </header>
       <main>
-        {notification && (
-          <Notification message={notification} />
-        )}
+        <Notification />
         <AnecdoteForm />
         <AnecdoteList />
       </main>
