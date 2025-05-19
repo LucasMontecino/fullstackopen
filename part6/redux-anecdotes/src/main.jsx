@@ -1,9 +1,20 @@
 import ReactDOM from 'react-dom/client';
-import { legacy_createStore as createStore } from 'redux';
+import {
+  legacy_createStore as createStore,
+  combineReducers,
+} from 'redux';
 import { Provider } from 'react-redux';
 import App from './App';
-import reducer from './reducers/anecdoteReducer';
 import './index.css';
+import { anecdoteReducer } from './reducers/anecdoteReducer';
+import { filterAnecdotesReducer } from './reducers/filterAnecdotesReducer';
+import { notificationReducer } from './reducers/notificationReducer';
+
+const reducer = combineReducers({
+  anecdotes: anecdoteReducer,
+  filter: filterAnecdotesReducer,
+  notification: notificationReducer,
+});
 
 const store = createStore(reducer);
 
