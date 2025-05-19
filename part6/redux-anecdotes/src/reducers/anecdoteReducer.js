@@ -18,37 +18,23 @@ const asObject = (anecdote) => {
   };
 };
 
-const initialState = {
-  anecdotes: anecdotesAtStart.map(asObject),
-  notification: '',
-};
+const initialState = anecdotesAtStart.map(asObject);
 
-const reducer = (state = initialState, action) => {
+export const anecdoteReducer = (
+  state = initialState,
+  action
+) => {
   switch (action.type) {
     case 'ANECDOTE_VOTE': {
       const { id } = action.payload;
-      return {
-        ...state,
-        anecdotes: state.anecdotes.map((anecdote) =>
-          anecdote.id === id
-            ? { ...anecdote, votes: anecdote.votes + 1 }
-            : anecdote
-        ),
-      };
+      return state.map((anecdote) =>
+        anecdote.id === id
+          ? { ...anecdote, votes: anecdote.votes + 1 }
+          : anecdote
+      );
     }
-    case 'NEW_ANECDOTE': {
-      return {
-        ...state,
-        anecdotes: [...state.anecdotes, action.payload],
-        notification: 'New note created!',
-      };
-    }
-    case 'CLEAR_NOTIFICATION': {
-      return {
-        ...state,
-        notification: '',
-      };
-    }
+    case 'NEW_ANECDOTE':
+      return [...state, action.payload];
     default:
       return state;
   }
@@ -67,11 +53,3 @@ export const createAnecdote = (anecdote) => {
     payload: { content: anecdote, id: getId(), votes: 0 },
   };
 };
-
-export const clearNotification = () => {
-  return {
-    type: 'CLEAR_NOTIFICATION',
-  };
-};
-
-export default reducer;
