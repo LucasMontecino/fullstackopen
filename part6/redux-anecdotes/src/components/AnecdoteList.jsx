@@ -1,7 +1,12 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { voteAnecdote } from '../reducers/anecdoteReducer';
+import {
+  setNotification,
+  clearNotification,
+} from '../reducers/notificationReducer';
 import FilterAnecdotes from './FilterAnecdotes';
 import PropTypes from 'prop-types';
+import anecdoteService from '../services/anecdotes';
 
 const Anecdote = ({ anecdote, handleClick }) => {
   return (
@@ -33,21 +38,28 @@ Anecdote.propTypes = {
 const AnecdoteList = () => {
   const anecdotes = useSelector((state) => {
     if (state.filter === '') {
-      return state.anecdotes.sort(
-        (a, b) => b.votes - a.votes
-      );
+      return state.anecdotes;
     }
-    return state.anecdotes
-      .filter((anecdote) =>
-        anecdote.content
-          .toLowerCase()
-          .includes(state.filter.toLowerCase())
-      )
-      .sort((a, b) => b.votes - a.votes);
+    return state.anecdotes.filter((anecdote) =>
+      anecdote.content
+        .toLowerCase()
+        .includes(state.filter.toLowerCase())
+    );
   });
   const dispatch = useDispatch();
-  const vote = (id) => {
-    dispatch(voteAnecdote(id));
+
+  const vote = async (anecdote) => {
+    await anecdoteService.update(anecdote.id, {
+      ...anecdote,
+      votes: anecdote.votes + 1,
+    });
+    dispatch(voteAnecdote(anecdote.id));
+    dispatch(
+      setNotification(`You voted ${anecdote.content}`)
+    );
+    setTimeout(() => {
+      dispatch(clearNotification());
+    }, 5000);
   };
 
   return (
@@ -55,13 +67,15 @@ const AnecdoteList = () => {
       <h2 className="anecdotes-title">Anecdotes</h2>
       <FilterAnecdotes />
       <ul className="anecdotes-list">
-        {anecdotes.map((anecdote) => (
-          <Anecdote
-            key={anecdote.id}
-            anecdote={anecdote}
-            handleClick={() => vote(anecdote.id)}
-          />
-        ))}
+        {[...anecdotes]
+          .sort((a, b) => b.votes - a.votes)
+          .map((anecdote) => (
+            <Anecdote
+              key={anecdote.id}
+              anecdote={anecdote}
+              handleClick={() => vote(anecdote)}
+            />
+          ))}
       </ul>
     </div>
   );
