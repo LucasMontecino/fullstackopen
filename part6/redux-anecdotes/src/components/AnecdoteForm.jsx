@@ -1,8 +1,9 @@
 import { useDispatch } from 'react-redux';
+import { createAnecdote } from '../reducers/anecdoteReducer';
 import {
-  createAnecdote,
   clearNotification,
-} from '../reducers/anecdoteReducer';
+  setNotification,
+} from '../reducers/notificationReducer';
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch();
@@ -12,6 +13,9 @@ const AnecdoteForm = () => {
     const content = e.target.anecdote.value;
     e.target.anecdote.value = '';
     dispatch(createAnecdote(content));
+    dispatch(
+      setNotification('New note created successfully!')
+    );
     setTimeout(() => {
       dispatch(clearNotification());
     }, 3000);
@@ -28,6 +32,7 @@ const AnecdoteForm = () => {
             type="text"
             placeholder="Create anecdote..."
             autoComplete="off"
+            title="type for creating new notes"
           />
           <button type="submit" className="btn btn-md">
             create
