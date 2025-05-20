@@ -7,7 +7,7 @@ const NotificationContext = createContext();
 const NotificationContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(
     notificationReducer,
-    { notification: '' }
+    { notification: '', error: '' }
   );
 
   return (
