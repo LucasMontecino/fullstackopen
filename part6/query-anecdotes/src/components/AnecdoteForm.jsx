@@ -7,6 +7,7 @@ import {
 import { NotificationContext } from '../context/NotificationContext';
 import truncateWord from '../utils/truncateWord';
 import { showNotification } from '../utils/notification';
+import { showError } from '../utils/errorNotification';
 
 const AnecdoteForm = () => {
   const { dispatch } = useContext(NotificationContext);
@@ -29,18 +30,23 @@ const AnecdoteForm = () => {
         )}' created successfully!`
       );
     },
-    onError: () => {
-      setTimeout(() => {
-        newAnecdoteMutation.reset();
-      }, 5000);
-    },
   });
 
   const onCreate = (event) => {
     event.preventDefault();
     const content = event.target.anecdote.value;
     event.target.anecdote.value = '';
-    newAnecdoteMutation.mutate({ content, votes: 0 });
+    newAnecdoteMutation.mutate(
+      { content, votes: 0 },
+      {
+        onError: (error) => {
+          showError(dispatch, error.message);
+          setTimeout(() => {
+            newAnecdoteMutation.reset();
+          }, 5000);
+        },
+      }
+    );
   };
 
   return (
@@ -58,11 +64,6 @@ const AnecdoteForm = () => {
           create
         </button>
       </form>
-      {newAnecdoteMutation.isError && (
-        <p style={{ color: '#f00' }}>
-          {newAnecdoteMutation.error.message}
-        </p>
-      )}
     </div>
   );
 };
