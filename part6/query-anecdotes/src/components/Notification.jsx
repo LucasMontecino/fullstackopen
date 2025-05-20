@@ -4,10 +4,18 @@ import { NotificationContext } from '../context/NotificationContext';
 const Notification = () => {
   const { state } = useContext(NotificationContext);
   return (
-    state.notification !== '' && (
-      <div className="notification container">
-        <p className="notification__text">
-          {state.notification}
+    (state.notification !== '' || state.error !== '') && (
+      <div className="container">
+        <p
+          className={`notification ${
+            state.notification && 'success'
+          } ${state.error && 'error'}`}
+        >
+          {state.notification
+            ? state.notification
+            : state.error
+            ? state.error
+            : null}
         </p>
       </div>
     )
