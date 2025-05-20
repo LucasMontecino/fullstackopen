@@ -9,6 +9,10 @@ import {
 } from '@tanstack/react-query';
 
 import PropTypes from 'prop-types';
+import { useContext } from 'react';
+import { NotificationContext } from '../context/NotificationContext';
+import truncateWord from '../utils/truncateWord';
+import { showNotification } from '../utils/notification';
 
 const Anecdote = ({ anecdote, handleClick }) => {
   return (
@@ -38,6 +42,7 @@ Anecdote.propTypes = {
 };
 
 const AnecdotesList = () => {
+  const { dispatch } = useContext(NotificationContext);
   const queryClient = useQueryClient();
 
   const { isPending, isError, data } = useQuery({
@@ -60,6 +65,12 @@ const AnecdotesList = () => {
             ? { ...anecdote, votes: anecdote.votes + 1 }
             : anecdote
         )
+      );
+      showNotification(
+        dispatch,
+        `Anecdote '${truncateWord(
+          updatedAnecdote.content
+        )}' voted`
       );
     },
   });
