@@ -1,10 +1,15 @@
+import { useContext } from 'react';
 import { createNewAnecdote } from '../services/requests';
 import {
   useQueryClient,
   useMutation,
 } from '@tanstack/react-query';
+import { NotificationContext } from '../context/NotificationContext';
+import truncateWord from '../utils/truncateWord';
+import { showNotification } from '../utils/notification';
 
 const AnecdoteForm = () => {
+  const { dispatch } = useContext(NotificationContext);
   const queryClient = useQueryClient();
 
   const newAnecdoteMutation = useMutation({
@@ -16,6 +21,12 @@ const AnecdoteForm = () => {
       queryClient.setQueryData(
         ['anecdotes'],
         anecdotes.concat(anecdote)
+      );
+      showNotification(
+        dispatch,
+        `Note '${truncateWord(
+          anecdote.content.toLowerCase()
+        )}' created successfully!`
       );
     },
     onError: () => {
