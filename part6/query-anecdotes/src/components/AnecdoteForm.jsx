@@ -33,16 +33,19 @@ const AnecdoteForm = () => {
   };
 
   return (
-    <div>
-      <h3>create new</h3>
-      <form onSubmit={onCreate}>
+    <div className="container form">
+      <h1 className="form__title">Create new</h1>
+      <form onSubmit={onCreate} className="form__content">
         <input
           name="anecdote"
           id="anecdote"
           placeholder="Create anecdote..."
           autoComplete="off"
+          className="form__input"
         />
-        <button type="submit">create</button>
+        <button type="submit" className="btn">
+          create
+        </button>
       </form>
       {newAnecdoteMutation.isError && (
         <p style={{ color: '#f00' }}>
