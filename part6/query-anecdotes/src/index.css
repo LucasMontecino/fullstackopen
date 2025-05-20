@@ -24,6 +24,7 @@ button {
     max-width: 890px;
     margin: 0 auto;
     padding: 0 10px;
+    position: relative;
 }
 
 .row {
@@ -102,7 +103,7 @@ nav h3 a:hover {
     background-color: #333A45;
     border-color: transparent;
     border-radius: 9999px;
-    padding: 4px 4px 4px 12px;
+    padding: 12px;
     color: #fff;
     font-weight: 600;
     flex-grow: 1;
@@ -141,4 +142,25 @@ nav h3 a:hover {
 
 .list__has {
     font-weight: 700;
+}
+
+.notification__text {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #ccc;
+    color: #229954;
+    padding: 10px;
+    border: 3px solid #229954;
+    font-weight: 600;
+    border-radius: 8px;
+    z-index: 999;
+    opacity: .9;
+}
+
+@media (max-width: 450px) {
+    .form__content {
+        flex-direction: column;
+        gap: 16px;
+    }
 }
