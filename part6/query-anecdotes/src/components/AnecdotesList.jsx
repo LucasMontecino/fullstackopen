@@ -70,7 +70,7 @@ const AnecdotesList = () => {
 
   if (isError) {
     return (
-      <p>
+      <p className="container">
         anecdote service not available due to problems in
         server
       </p>
@@ -78,7 +78,7 @@ const AnecdotesList = () => {
   }
 
   if (isPending) {
-    return <p>loading data...</p>;
+    return <p className="container">loading data...</p>;
   }
 
   const anecdotes = data;
