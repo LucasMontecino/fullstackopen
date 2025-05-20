@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+body {
+    background-color: #23272F;
+    color: #F6F7F9;
+}
+
+body,
+input,
+button {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+}
+
+.container {
+    width: 80%;
+    max-width: 890px;
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+}
+
+.btn {
+    color: rgb(64 71 86);
+    padding: 12px 24px;
+    font-size: 17px;
+    background-color: rgb(88 196 220);
+    text-transform: capitalize;
+    border: transparent;
+    border-radius: 9999px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-sm {
+    padding: 4px 12px;
+    font-size: 15px;
+}
+
+.btn-secondary {
+    background-color: #252932;
+    color: #F6F7F9;
+    box-shadow: inset 0 0 0 1px #404756;
+    transition: opacity .2s ease-in-out;
+}
+
+.btn-secondary:hover {
+    opacity: .9;
+}
+
+input:focus {
+    outline: 2px solid #fff;
+}
+
+input::placeholder {
+    color: rgb(153 161 179);
+}
+
+/* specific styles */
+
+nav h3 {
+    font-size: 13px;
+    text-transform: uppercase;
+    padding: 16px 0;
+    font-weight: 500;
+}
+
+nav h3 a {
+    text-decoration: none;
+    color: #57C2DA;
+    letter-spacing: .325px;
+}
+
+nav h3 a:hover {
+    text-decoration: underline;
+}
+
+.form__content {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+    margin: 16px 0;
+}
+
+.form__title {
+    font-size: 40px;
+    margin-bottom: 4px;
+}
+
+.form__input {
+    background-color: #333A45;
+    border-color: transparent;
+    border-radius: 9999px;
+    padding: 4px 4px 4px 12px;
+    color: #fff;
+    font-weight: 600;
+    flex-grow: 1;
+    font-size: 15px;
+}
+
+.list {
+    font-size: 15px;
+    border-radius: 16px;
+    background-color: rgb(52 58 70);
+    margin-top: 32px;
+    margin-bottom: 16px;
+    box-shadow: inset 0 0 0 1px hsl(0deg 0% 100% / 8%);
+    padding: 24px 24px 16px;
+}
+
+.list__content {
+    margin: 12px 0 12px 24px;
+    padding-left: 0;
+}
+
+.list__item {
+    margin-bottom: 12px;
+    color: #ebecf0;
+    line-height: 1.7;
+}
+
+.list__title {
+    font-size: 24px;
+}
+
+.list__votes {
+    display: flex;
+    gap: 6px;
+}
+
+.list__has {
+    font-weight: 700;
+}
