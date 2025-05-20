@@ -144,18 +144,28 @@ nav h3 a:hover {
     font-weight: 700;
 }
 
-.notification__text {
+.notification {
     position: absolute;
     top: 0;
     right: 0;
     background-color: #ccc;
-    color: #229954;
     padding: 10px;
-    border: 3px solid #229954;
     font-weight: 600;
     border-radius: 8px;
     z-index: 999;
     opacity: .9;
+    border-width: 3px;
+    border-style: solid;
+}
+
+.success {
+    color: #229954;
+    border-color: #229954;
+}
+
+.error {
+    color: #e74c3c;
+    border-color: #e74c3c;
 }
 
 @media (max-width: 450px) {
