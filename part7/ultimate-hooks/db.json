@@ -1,0 +1,85 @@
+{
+  "notes": [
+    {
+      "id": 1,
+      "content": "custom-hooks are awesome!"
+    },
+    {
+      "id": 2,
+      "content": "best feature ever <3"
+    },
+    {
+      "content": "I love custom hooks!",
+      "id": 3
+    },
+    {
+      "content": "I love custom hooks!",
+      "id": 4
+    },
+    {
+      "content": "I am a big fan of custom hooks",
+      "id": 5
+    },
+    {
+      "content": "Deep custom hook",
+      "id": 6
+    },
+    {
+      "content": "",
+      "id": 7
+    },
+    {
+      "content": "a new hook",
+      "id": 8
+    },
+    {
+      "content": "a new hook",
+      "id": 9
+    },
+    {
+      "content": "my new content",
+      "id": 10
+    },
+    {
+      "content": "the new reusable abstraction",
+      "id": 11
+    }
+  ],
+  "persons": [
+    {
+      "id": 1,
+      "name": "mluukkai",
+      "number": "040-5483923"
+    },
+    {
+      "id": 2,
+      "name": "hellas",
+      "number": "012-123123"
+    },
+    {
+      "name": "lmontecino",
+      "number": "379-828400",
+      "id": 3
+    },
+    {
+      "name": "pherrero",
+      "number": "379-252525",
+      "id": 4
+    },
+    {
+      "name": "csiganoff",
+      "number": "379-338028",
+      "id": 5
+    },
+    {
+      "name": "rnegro",
+      "number": "379-428546",
+      "id": 6
+    },
+    {
+      "name": "jnegro",
+      "number": "379-695035",
+      "id": 7
+    }
+  ]
+}
