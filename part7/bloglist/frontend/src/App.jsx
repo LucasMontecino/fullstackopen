@@ -1,21 +1,28 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Blog from './components/Blog';
-import blogService from './services/blogs';
 import LoginForm from './components/LoginForm';
-import loginService from './services/login';
 import NotificationMessage from './components/NotificationMessage';
 import Logout from './components/Logout';
 import CreateBlog from './components/CreateBlog';
 import Togglable from './components/Togglable';
 import Button from './components/Button';
+import { setNotification } from './store/reducers/notificationReducer';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setBlog,
+  setInitialBlogs,
+  likeABlog,
+  deleteBlog,
+} from './store/reducers/blogsReducer';
+import { setError } from './store/reducers/errorReducer';
+import { loginUser, logOut } from './store/reducers/userReducer';
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
-
-  const [user, setUser] = useState(null);
-
-  const [notification, setNotification] = useState(null);
-  const [errors, setErrors] = useState(null);
+  const dispatch = useDispatch();
+  const notification = useSelector((state) => state.notification);
+  const blogs = useSelector((state) => state.blogs);
+  const errors = useSelector((state) => state.error);
+  const user = useSelector((state) => state.user);
 
   const blogFormRef = useRef();
 
@@ -25,126 +32,71 @@ const App = () => {
 
   const handleLogin = async (credentials) => {
     try {
-      const result = await loginService.login(credentials);
-      window.localStorage.setItem('loggedUser', JSON.stringify(result));
-      blogService.setToken(result.token);
-      setUser(result);
-      setNotification('logged successfully!');
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+      dispatch(loginUser(credentials));
+      dispatch(setNotification('logged successfully!', 5));
     } catch (error) {
       console.error({ message: error.response.data.error });
-      setErrors(error.response.data.error);
-      setTimeout(() => {
-        setErrors(null);
-      }, 5000);
+      dispatch(setError(error.response.data.error, 5));
     }
   };
 
   const handleLogout = () => {
-    setUser(null);
-    window.localStorage.removeItem('loggedUser');
+    dispatch(logOut());
   };
 
   const handleAddBlog = async (newBlog) => {
-    setErrors(null);
     try {
-      const entryBlog = await blogService.create(newBlog);
-
-      setBlogs(blogs.concat(entryBlog));
+      dispatch(setBlog(newBlog));
 
       blogFormRef.current.toggleVisibility();
 
-      setNotification(
-        `a new blog ${entryBlog.title} by ${entryBlog.author} added`
+      dispatch(
+        setNotification(
+          `a new blog ${newBlog.title} by ${newBlog.author} added`,
+          5
+        )
       );
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
     } catch (error) {
       console.error({ message: error.response.data.error });
-      setErrors(error.response.data.error);
-      setTimeout(() => {
-        setErrors(null);
-      }, 5000);
+      dispatch(setError(error.response.data.error, 5));
     }
   };
 
   const updateBlog = async (id) => {
-    const findBlog = blogs.find((blog) => blog.id === id);
-    setErrors(null);
+    const findBlog = blogs.find((item) => item.id === id);
     try {
-      const entryBlog = await blogService.update(id, {
-        ...findBlog,
-        likes: findBlog.likes + 1,
-      });
-
-      setBlogs(
-        blogs.map((blog) =>
-          blog.id === id
-            ? {
-                ...entryBlog,
-                user: findBlog.user,
-              }
-            : blog
+      dispatch(likeABlog(id, findBlog));
+      dispatch(
+        setNotification(
+          `you successfully liked the blog ${findBlog.title} by ${findBlog.author}`,
+          5
         )
       );
-
-      setNotification(
-        `you successfully liked the blog ${entryBlog.title} by ${entryBlog.author}`
-      );
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
     } catch (error) {
       console.error({ message: error.response.data.error });
-      setErrors(error.response.data.error);
-      setTimeout(() => {
-        setErrors(null);
-      }, 5000);
+      dispatch(setError(error.response.data.error, 5));
     }
   };
 
-  const deleteBlog = async (id) => {
+  const handleDelete = async (id) => {
     const findBlog = blogs.find((blog) => blog.id === id);
     try {
       const dialog = confirm(
         `Remove blog ${findBlog.title} by ${findBlog.author}`
       );
       if (dialog) {
-        await blogService.deleteItem(id);
-        setBlogs(blogs.filter((blog) => blog.id !== id));
-        setNotification('blog deleted successfully!');
-        setTimeout(() => {
-          setNotification(null);
-        }, 5000);
+        dispatch(deleteBlog(id));
+        dispatch(setNotification('blog deleted successfully!', 5));
       }
     } catch (error) {
       console.error({ message: error.response.data.error });
-      setErrors(error.response.data.error);
-      setTimeout(() => {
-        setErrors(null);
-      }, 5000);
+      dispatch(setError(error.response.data.error, 5));
     }
   };
 
   useEffect(() => {
-    const fetchBlogs = async () => {
-      const response = await blogService.getAll();
-      setBlogs(response);
-    };
-    fetchBlogs();
-  }, []);
-
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedUser');
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
-    }
-  }, []);
+    dispatch(setInitialBlogs());
+  }, [dispatch]);
 
   return (
     <div>
@@ -176,7 +128,7 @@ const App = () => {
                   <Button
                     type={'button'}
                     label={'remove'}
-                    onClick={() => deleteBlog(blog.id)}
+                    onClick={() => handleDelete(blog.id)}
                   />
                 )}
               </Blog>
