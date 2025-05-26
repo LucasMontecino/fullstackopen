@@ -1,6 +1,6 @@
 const NotificationMessage = ({ message, type }) => {
   return (
-    message !== null && (
+    message && (
       <p
         style={{
           color: type === 'error' ? 'red' : 'green',
