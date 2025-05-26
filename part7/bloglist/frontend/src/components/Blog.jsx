@@ -14,7 +14,7 @@ const Blog = ({ blog, updateBlog, children }) => {
         padding: '2px 6px',
       }}
     >
-      <span className="blog-title">{blog.title}</span>
+      <span className="blog-title">{blog.title} </span>
       <span className="blog-author">{blog.author}</span>
 
       <Button
