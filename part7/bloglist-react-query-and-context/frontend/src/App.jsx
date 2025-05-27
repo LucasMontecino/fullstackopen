@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useContext } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Blog from './components/Blog';
 import blogService from './services/blogs';
 import LoginForm from './components/LoginForm';
@@ -8,23 +8,9 @@ import Logout from './components/Logout';
 import CreateBlog from './components/CreateBlog';
 import Togglable from './components/Togglable';
 import Button from './components/Button';
-import { BlogsContext } from './context/blogsContext';
-import { useQuery } from '@tanstack/react-query';
-import { getBlogs } from './requests/blogs';
 
 const App = () => {
-  const { state, dispatch } = useContext(BlogsContext);
-  const { isPending, isError, data, error } = useQuery({
-    queryKey: ['blogs'],
-    queryFn: async () => {
-      const data = await getBlogs();
-      console.log('the data..', data);
-      dispatch({ type: 'INITIAL_BLOGS', payload: data });
-      return data;
-    },
-  });
-
-  const blogs = state;
+  const [blogs, setBlogs] = useState([]);
 
   const [user, setUser] = useState(null);
 
@@ -61,95 +47,95 @@ const App = () => {
     window.localStorage.removeItem('loggedUser');
   };
 
-  // const handleAddBlog = async (newBlog) => {
-  //   setErrors(null);
-  //   try {
-  //     const entryBlog = await blogService.create(newBlog);
+  const handleAddBlog = async (newBlog) => {
+    setErrors(null);
+    try {
+      const entryBlog = await blogService.create(newBlog);
 
-  //     setBlogs(blogs.concat(entryBlog));
+      setBlogs(blogs.concat(entryBlog));
 
-  //     blogFormRef.current.toggleVisibility();
+      blogFormRef.current.toggleVisibility();
 
-  //     setNotification(
-  //       `a new blog ${entryBlog.title} by ${entryBlog.author} added`
-  //     );
-  //     setTimeout(() => {
-  //       setNotification(null);
-  //     }, 5000);
-  //   } catch (error) {
-  //     console.error({ message: error.response.data.error });
-  //     setErrors(error.response.data.error);
-  //     setTimeout(() => {
-  //       setErrors(null);
-  //     }, 5000);
-  //   }
-  // };
+      setNotification(
+        `a new blog ${entryBlog.title} by ${entryBlog.author} added`
+      );
+      setTimeout(() => {
+        setNotification(null);
+      }, 5000);
+    } catch (error) {
+      console.error({ message: error.response.data.error });
+      setErrors(error.response.data.error);
+      setTimeout(() => {
+        setErrors(null);
+      }, 5000);
+    }
+  };
 
-  // const updateBlog = async (id) => {
-  //   const findBlog = blogs.find((blog) => blog.id === id);
-  //   setErrors(null);
-  //   try {
-  //     const entryBlog = await blogService.update(id, {
-  //       ...findBlog,
-  //       likes: findBlog.likes + 1,
-  //     });
+  const updateBlog = async (id) => {
+    const findBlog = blogs.find((blog) => blog.id === id);
+    setErrors(null);
+    try {
+      const entryBlog = await blogService.update(id, {
+        ...findBlog,
+        likes: findBlog.likes + 1,
+      });
 
-  //     setBlogs(
-  //       blogs.map((blog) =>
-  //         blog.id === id
-  //           ? {
-  //               ...entryBlog,
-  //               user: findBlog.user,
-  //             }
-  //           : blog
-  //       )
-  //     );
+      setBlogs(
+        blogs.map((blog) =>
+          blog.id === id
+            ? {
+                ...entryBlog,
+                user: findBlog.user,
+              }
+            : blog
+        )
+      );
 
-  //     setNotification(
-  //       `you successfully liked the blog ${entryBlog.title} by ${entryBlog.author}`
-  //     );
-  //     setTimeout(() => {
-  //       setNotification(null);
-  //     }, 5000);
-  //   } catch (error) {
-  //     console.error({ message: error.response.data.error });
-  //     setErrors(error.response.data.error);
-  //     setTimeout(() => {
-  //       setErrors(null);
-  //     }, 5000);
-  //   }
-  // };
+      setNotification(
+        `you successfully liked the blog ${entryBlog.title} by ${entryBlog.author}`
+      );
+      setTimeout(() => {
+        setNotification(null);
+      }, 5000);
+    } catch (error) {
+      console.error({ message: error.response.data.error });
+      setErrors(error.response.data.error);
+      setTimeout(() => {
+        setErrors(null);
+      }, 5000);
+    }
+  };
 
-  // const deleteBlog = async (id) => {
-  //   const findBlog = blogs.find((blog) => blog.id === id);
-  //   try {
-  //     const dialog = confirm(
-  //       `Remove blog ${findBlog.title} by ${findBlog.author}`
-  //     );
-  //     if (dialog) {
-  //       await blogService.deleteItem(id);
-  //       setBlogs(blogs.filter((blog) => blog.id !== id));
-  //       setNotification('blog deleted successfully!');
-  //       setTimeout(() => {
-  //         setNotification(null);
-  //       }, 5000);
-  //     }
-  //   } catch (error) {
-  //     console.error({ message: error.response.data.error });
-  //     setErrors(error.response.data.error);
-  //     setTimeout(() => {
-  //       setErrors(null);
-  //     }, 5000);
-  //   }
-  // };
+  const deleteBlog = async (id) => {
+    const findBlog = blogs.find((blog) => blog.id === id);
+    try {
+      const dialog = confirm(
+        `Remove blog ${findBlog.title} by ${findBlog.author}`
+      );
+      if (dialog) {
+        await blogService.deleteItem(id);
+        setBlogs(blogs.filter((blog) => blog.id !== id));
+        setNotification('blog deleted successfully!');
+        setTimeout(() => {
+          setNotification(null);
+        }, 5000);
+      }
+    } catch (error) {
+      console.error({ message: error.response.data.error });
+      setErrors(error.response.data.error);
+      setTimeout(() => {
+        setErrors(null);
+      }, 5000);
+    }
+  };
 
-  // useEffect(() => {
-  //   const fetchBlogs = async () => {
-  //     const response = await blogService.getAll();
-  //     setBlogs(response);
-  //   };
-  //   fetchBlogs();
-  // }, []);
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      const response = await blogService.getAll();
+      setBlogs(response);
+    };
+    fetchBlogs();
+  }, []);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser');
@@ -176,21 +162,21 @@ const App = () => {
           <div style={{ marginBottom: '1rem' }}>
             {user.name} logged in - <Logout handleClick={handleLogout} />
           </div>
-          {/* <Togglable buttonLabel={'create new blog'} ref={blogFormRef}>
+          <Togglable buttonLabel={'create new blog'} ref={blogFormRef}>
             <CreateBlog createBlog={handleAddBlog} />
-          </Togglable> */}
+          </Togglable>
           <div style={{ marginTop: '6px' }}>
             {sortedBlogsByLikes.map((blog) => (
               <Blog
                 key={blog.id}
                 blog={blog}
-                // updateBlog={() => updateBlog(blog.id)}
+                updateBlog={() => updateBlog(blog.id)}
               >
                 {user.username === blog?.user?.username && (
                   <Button
                     type={'button'}
                     label={'remove'}
-                    // onClick={() => deleteBlog(blog.id)}
+                    onClick={() => deleteBlog(blog.id)}
                   />
                 )}
               </Blog>
