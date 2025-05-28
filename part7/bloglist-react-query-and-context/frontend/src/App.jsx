@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import Blog from './components/Blog';
 import blogService from './services/blogs';
 import LoginForm from './components/LoginForm';
@@ -8,143 +8,87 @@ import Logout from './components/Logout';
 import CreateBlog from './components/CreateBlog';
 import Togglable from './components/Togglable';
 import Button from './components/Button';
+import { BlogsContext } from './context/BlogsContext';
+import { setNotifications, setErrors } from './utils';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
+  const { state, dispatch } = useContext(BlogsContext);
+  const queryClient = useQueryClient();
 
-  const [user, setUser] = useState(null);
+  const { isPending, isError, data, error } = useQuery({
+    queryKey: ['blogs'],
+    queryFn: blogService.getAll,
+    refetchOnWindowFocus: false,
+  });
 
-  const [notification, setNotification] = useState(null);
-  const [errors, setErrors] = useState(null);
+  const blogs = data ? [...data].sort((a, b) => b.likes - a.likes) : [];
+
+  const user = state.user;
+  const notification = state.notification;
+  const errors = state.errors;
 
   const blogFormRef = useRef();
 
-  const sortedBlogsByLikes = [...blogs].sort((a, b) =>
-    a.likes < b.likes ? 1 : -1
-  );
+  const handleAddBlog = () => {
+    blogFormRef.current.toggleVisibility();
+  };
+
+  const deleteBlogMutation = useMutation({
+    mutationFn: blogService.deleteItem,
+    onSuccess: () => {
+      setNotifications(dispatch, 'blog deleted successfully!');
+    },
+    onError: () => {
+      console.error({ error: error.response.data.error ?? error.message });
+      setErrors(dispatch, error.response.data.error ?? error.message);
+    },
+  });
+
+  const deleteBlog = (id) => {
+    const findBlog = blogs.find((blog) => blog.id === id);
+    const dialog = confirm(
+      `Remove blog ${findBlog.title} by ${findBlog.author}`
+    );
+    if (dialog) {
+      deleteBlogMutation.mutate(id, {
+        onSuccess: () => {
+          const blogs = queryClient.getQueryData(['blogs']);
+          queryClient.setQueryData(
+            ['blogs'],
+            blogs.filter((item) => item.id !== id)
+          );
+        },
+      });
+    }
+  };
 
   const handleLogin = async (credentials) => {
     try {
       const result = await loginService.login(credentials);
       window.localStorage.setItem('loggedUser', JSON.stringify(result));
       blogService.setToken(result.token);
-      setUser(result);
-      setNotification('logged successfully!');
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+      dispatch({ type: 'SET_USER', payload: result });
+      setNotifications(dispatch, 'logged successfully!');
     } catch (error) {
-      console.error({ message: error.response.data.error });
-      setErrors(error.response.data.error);
-      setTimeout(() => {
-        setErrors(null);
-      }, 5000);
+      console.error({ error: error.response.data.error ?? error.message });
+      setErrors(dispatch, error.response.data.error ?? error.message);
     }
   };
 
   const handleLogout = () => {
-    setUser(null);
+    dispatch({ type: 'CLEAR_USER' });
     window.localStorage.removeItem('loggedUser');
   };
-
-  const handleAddBlog = async (newBlog) => {
-    setErrors(null);
-    try {
-      const entryBlog = await blogService.create(newBlog);
-
-      setBlogs(blogs.concat(entryBlog));
-
-      blogFormRef.current.toggleVisibility();
-
-      setNotification(
-        `a new blog ${entryBlog.title} by ${entryBlog.author} added`
-      );
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
-    } catch (error) {
-      console.error({ message: error.response.data.error });
-      setErrors(error.response.data.error);
-      setTimeout(() => {
-        setErrors(null);
-      }, 5000);
-    }
-  };
-
-  const updateBlog = async (id) => {
-    const findBlog = blogs.find((blog) => blog.id === id);
-    setErrors(null);
-    try {
-      const entryBlog = await blogService.update(id, {
-        ...findBlog,
-        likes: findBlog.likes + 1,
-      });
-
-      setBlogs(
-        blogs.map((blog) =>
-          blog.id === id
-            ? {
-                ...entryBlog,
-                user: findBlog.user,
-              }
-            : blog
-        )
-      );
-
-      setNotification(
-        `you successfully liked the blog ${entryBlog.title} by ${entryBlog.author}`
-      );
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
-    } catch (error) {
-      console.error({ message: error.response.data.error });
-      setErrors(error.response.data.error);
-      setTimeout(() => {
-        setErrors(null);
-      }, 5000);
-    }
-  };
-
-  const deleteBlog = async (id) => {
-    const findBlog = blogs.find((blog) => blog.id === id);
-    try {
-      const dialog = confirm(
-        `Remove blog ${findBlog.title} by ${findBlog.author}`
-      );
-      if (dialog) {
-        await blogService.deleteItem(id);
-        setBlogs(blogs.filter((blog) => blog.id !== id));
-        setNotification('blog deleted successfully!');
-        setTimeout(() => {
-          setNotification(null);
-        }, 5000);
-      }
-    } catch (error) {
-      console.error({ message: error.response.data.error });
-      setErrors(error.response.data.error);
-      setTimeout(() => {
-        setErrors(null);
-      }, 5000);
-    }
-  };
-
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      const response = await blogService.getAll();
-      setBlogs(response);
-    };
-    fetchBlogs();
-  }, []);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser');
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      setUser(user);
+      dispatch({ type: 'SET_USER', payload: user });
       blogService.setToken(user.token);
     }
-  }, []);
+  }, [dispatch]);
 
   return (
     <div>
@@ -163,24 +107,26 @@ const App = () => {
             {user.name} logged in - <Logout handleClick={handleLogout} />
           </div>
           <Togglable buttonLabel={'create new blog'} ref={blogFormRef}>
-            <CreateBlog createBlog={handleAddBlog} />
+            <CreateBlog handleAddBlog={handleAddBlog} />
           </Togglable>
           <div style={{ marginTop: '6px' }}>
-            {sortedBlogsByLikes.map((blog) => (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                updateBlog={() => updateBlog(blog.id)}
-              >
-                {user.username === blog?.user?.username && (
-                  <Button
-                    type={'button'}
-                    label={'remove'}
-                    onClick={() => deleteBlog(blog.id)}
-                  />
-                )}
-              </Blog>
-            ))}
+            {isPending ? (
+              <p>Loading data...</p>
+            ) : isError ? (
+              <p>Error: {error.message}</p>
+            ) : blogs.length > 0 ? (
+              blogs.map((blog) => (
+                <Blog key={blog.id} blog={blog}>
+                  {user.username === blog?.user?.username && (
+                    <Button
+                      type={'button'}
+                      label={'remove'}
+                      onClick={() => deleteBlog(blog.id)}
+                    />
+                  )}
+                </Blog>
+              ))
+            ) : null}
           </div>
         </div>
       )}
