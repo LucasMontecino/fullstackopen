@@ -108,6 +108,8 @@ blogsRouter.put('/:id', middleware.userExtractor, async (request, response) => {
       error: 'userId missing or not valid',
     });
 
+  blog.likes = likes;
+
   await blog.deleteOne();
 
   const blogObject = new Blog({
@@ -125,8 +127,18 @@ blogsRouter.put('/:id', middleware.userExtractor, async (request, response) => {
   );
 
   await user.save();
-
-  return response.json(updatedBlog);
+  return response.json({
+    id: updatedBlog._id.toString(),
+    title: updatedBlog.title,
+    author: updatedBlog.author,
+    url: updatedBlog.url,
+    likes: updatedBlog.likes,
+    user: {
+      id: user._id,
+      name: user.name,
+      username: user.username,
+    },
+  });
 });
 
 module.exports = blogsRouter;
