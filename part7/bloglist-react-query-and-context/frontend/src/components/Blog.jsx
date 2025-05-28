@@ -1,10 +1,49 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Button from './Button';
+import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
+import blogService from '../services/blogs';
+import { setNotifications, setErrors } from '../utils';
+import { BlogsContext } from '../context/BlogsContext';
 
-const Blog = ({ blog, updateBlog, children }) => {
+const Blog = ({ blog, children }) => {
   const [showDetails, setShowDetails] = useState(false);
+  const queryClient = useQueryClient();
+
+  const { dispatch } = useContext(BlogsContext);
 
   const toggleDetails = () => setShowDetails((prev) => !prev);
+
+  const updateBlogMutation = useMutation({
+    mutationFn: blogService.update,
+    onSuccess: (updatedBlog) => {
+      setNotifications(
+        dispatch,
+        `you successfully liked the blog ${updatedBlog.title} by ${updatedBlog.author}`
+      );
+    },
+    onError: (error) => {
+      console.error({ error: error.response?.data?.error ?? error.message });
+      setErrors(dispatch, error.response?.data?.error ?? error.message);
+    },
+  });
+
+  const updateBlog = (id) => {
+    updateBlogMutation.mutate(
+      {
+        id,
+        blog: { ...blog, likes: blog.likes + 1 },
+      },
+      {
+        onSuccess: (updatedBlog) => {
+          const blogs = queryClient.getQueryData(['blogs']);
+          queryClient.setQueryData(
+            ['blogs'],
+            blogs.map((item) => (item.id === id ? updatedBlog : item))
+          );
+        },
+      }
+    );
+  };
 
   return (
     <div
@@ -14,7 +53,7 @@ const Blog = ({ blog, updateBlog, children }) => {
         padding: '2px 6px',
       }}
     >
-      <span className="blog-title">{blog.title}</span>
+      <span className="blog-title">{blog.title} </span>
       <span className="blog-author">{blog.author}</span>
 
       <Button
@@ -38,7 +77,7 @@ const Blog = ({ blog, updateBlog, children }) => {
             <Button
               type={'button'}
               label={'like'}
-              onClick={updateBlog}
+              onClick={() => updateBlog(blog.id)}
               testid={'button-likes'}
             />
           </div>
