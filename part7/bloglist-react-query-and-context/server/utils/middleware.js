@@ -45,9 +45,11 @@ const errorHandler = (error, req, res, next) => {
     return res.status(400).json({ error: 'username already exists' });
   } else if (error.name === 'JsonWebTokenError') {
     return res.status(401).json({ error: 'token invalid' });
+  } else if (error.name === 'TokenExpiredError') {
+    return res.status(401).json({ error: error.message });
   }
 
-  next({ error: error.message });
+  next(error);
 };
 
 module.exports = {
