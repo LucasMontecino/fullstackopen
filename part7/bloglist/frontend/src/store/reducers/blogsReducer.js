@@ -34,13 +34,10 @@ export const deleteBlog = (id) => {
   };
 };
 
-export const likeABlog = (id, entryBlog) => {
+export const likeABlog = (id) => {
   return async (dispatch) => {
+    await blogService.update(id);
     dispatch(updateBlog(id));
-    await blogService.update(id, {
-      ...entryBlog,
-      likes: entryBlog.likes + 1,
-    });
   };
 };
 
