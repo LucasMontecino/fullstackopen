@@ -1,14 +1,32 @@
 const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
 const User = require('../models/user');
+const Comment = require('../models/comment');
 const middleware = require('../utils/middleware');
 
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({}).populate('user', {
-    username: 1,
-    name: 1,
-  });
+  const blogs = await Blog.find({})
+    .populate('user', {
+      username: 1,
+      name: 1,
+    })
+    .populate('comments', {
+      content: 1,
+    });
   return response.json(blogs);
+});
+
+blogsRouter.get('/:id', async (request, response) => {
+  const { id } = request.params;
+  const blog = await Blog.findById(id)
+    .populate('user', {
+      username: 1,
+      name: 1,
+    })
+    .populate('comments', {
+      content: 1,
+    });
+  return response.json(blog);
 });
 
 blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
@@ -91,7 +109,6 @@ blogsRouter.delete(
 
 blogsRouter.put('/:id', middleware.userExtractor, async (request, response) => {
   const { id } = request.params;
-  const { likes, author, title, url } = request.body;
 
   const decodedUser = request.user;
 
@@ -108,17 +125,9 @@ blogsRouter.put('/:id', middleware.userExtractor, async (request, response) => {
       error: 'userId missing or not valid',
     });
 
-  await blog.deleteOne();
+  blog.likes = blog.likes + 1;
 
-  const blogObject = new Blog({
-    likes,
-    author,
-    title,
-    url,
-    user: user._id,
-  });
-
-  const updatedBlog = await blogObject.save();
+  const updatedBlog = await blog.save();
 
   user.blogs = user.blogs.map((blog) =>
     blog._id.toString() === id.toString() ? updatedBlog._id : blog
@@ -128,5 +137,34 @@ blogsRouter.put('/:id', middleware.userExtractor, async (request, response) => {
 
   return response.json(updatedBlog);
 });
+
+blogsRouter.post(
+  '/:id/comments',
+  middleware.userExtractor,
+  async (req, res) => {
+    const { id } = req.params;
+    const { content } = req.body;
+    const decodedUser = req.user;
+
+    if (!decodedUser.id)
+      return res.status(401).json({ error: 'token invalid' });
+
+    const blog = await Blog.findById(id);
+    if (!blog)
+      return res.status(404).json({ error: 'blogId missing or not valid' });
+
+    const comment = new Comment({
+      content,
+      blog: blog._id,
+    });
+
+    const savedComment = await comment.save();
+
+    blog.comments = blog.comments.concat(savedComment._id);
+    await blog.save();
+
+    return res.status(201).json(savedComment);
+  }
+);
 
 module.exports = blogsRouter;
