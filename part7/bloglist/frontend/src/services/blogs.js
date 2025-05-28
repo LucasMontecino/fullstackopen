@@ -23,13 +23,13 @@ const create = async (blog) => {
   return response.data;
 };
 
-const update = async (id, blog) => {
+const update = async (id) => {
   const config = {
     headers: {
       Authorization: token,
     },
   };
-  const response = await axios.put(`${baseUrl}/${id}`, blog, config);
+  const response = await axios.put(`${baseUrl}/${id}`, undefined, config);
   return response.data;
 };
 
@@ -44,10 +44,27 @@ const deleteItem = async (id) => {
   return response.data;
 };
 
+const getResource = async (id) => {
+  const res = await axios.get(`${baseUrl}/${id}`);
+  return res.data;
+};
+
+const createNewComment = async (id, content) => {
+  const config = {
+    headers: {
+      Authorization: token,
+    },
+  };
+  const res = await axios.post(`${baseUrl}/${id}/comments`, content, config);
+  return res.data;
+};
+
 export default {
   getAll,
   create,
   setToken,
   update,
   deleteItem,
+  getResource,
+  createNewComment,
 };
