@@ -6,6 +6,7 @@ import { deleteBlog, setBlog } from '../store/reducers/blogsReducer';
 import { setNotification } from '../store/reducers/notificationReducer';
 import { setError } from '../store/reducers/errorReducer';
 import { useRef } from 'react';
+import Loading from './Loading';
 
 const Blogs = () => {
   const dispatch = useDispatch();
@@ -53,11 +54,15 @@ const Blogs = () => {
       <Togglable buttonLabel={'create new blog'} ref={blogFormRef}>
         <CreateBlog createBlog={handleAddBlog} />
       </Togglable>
-      <div style={{ marginTop: '6px' }}>
-        {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} />
-        ))}
-      </div>
+      {blogs.length === 0 ? (
+        <Loading />
+      ) : (
+        <div style={{ marginTop: '6px' }}>
+          {blogs.map((blog) => (
+            <Blog key={blog.id} blog={blog} />
+          ))}
+        </div>
+      )}
     </>
   );
 };
