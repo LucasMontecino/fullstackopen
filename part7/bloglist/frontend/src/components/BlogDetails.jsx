@@ -11,6 +11,7 @@ import { likeABlog } from '../store/reducers/blogsReducer';
 import { setNotification } from '../store/reducers/notificationReducer';
 import { setError } from '../store/reducers/errorReducer';
 import CreateComment from './CreateComment';
+import Loading from './Loading';
 
 const BlogDetails = () => {
   const { id } = useParams();
@@ -44,33 +45,42 @@ const BlogDetails = () => {
 
   return (
     <div>
-      <h2>{blogDetails?.title ?? 'Unknown title'}</h2>
-      <a
-        href={blogDetails?.url ?? '#'}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {blogDetails?.url ?? 'blog url...'}
-      </a>
-      <div>
-        <span>{blogDetails?.likes} likes</span>
-        <Button
-          label={'like'}
-          type={'button'}
-          onClick={() => updateBlog(blogDetails.id)}
-        />
-      </div>
-      <p>added by {blogDetails?.user?.name ?? 'Unknown creator'}</p>
-      <h3>comments</h3>
-      <CreateComment blogId={blogDetails?.id} blogTitle={blogDetails?.title} />
-      {blogDetails?.comments && blogDetails?.comments.length > 0 ? (
-        <ul>
-          {blogDetails.comments.map((comment) => (
-            <li key={comment.id}>{comment.content}</li>
-          ))}
-        </ul>
+      {!blogDetails ? (
+        <Loading />
       ) : (
-        <p>this blog doesnt have any comments yet</p>
+        <>
+          <h2>{blogDetails.title ?? ''}</h2>
+          <a
+            href={blogDetails.url ?? ''}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {blogDetails.url ?? ''}
+          </a>
+          <div>
+            <span>{blogDetails.likes ?? 0} likes</span>
+            <Button
+              label={'like'}
+              type={'button'}
+              onClick={() => updateBlog(blogDetails.id)}
+            />
+          </div>
+          <p>added by {blogDetails.user?.name ?? ''}</p>
+          <h3>comments</h3>
+          <CreateComment
+            blogId={blogDetails.id}
+            blogTitle={blogDetails.title}
+          />
+          {blogDetails.comments && blogDetails.comments.length > 0 ? (
+            <ul>
+              {blogDetails.comments.map((comment) => (
+                <li key={comment.id}>{comment.content}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>this blog doesnt have any comments yet</p>
+          )}
+        </>
       )}
     </div>
   );
