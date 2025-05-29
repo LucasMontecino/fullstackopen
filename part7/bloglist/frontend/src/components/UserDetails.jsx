@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser, appendUser } from '../store/reducers/userDetailsReducer';
+import Loading from './Loading';
 
 const UserDetails = () => {
   const { id } = useParams();
@@ -17,14 +18,23 @@ const UserDetails = () => {
   }, [dispatch, id]);
   return (
     <div>
-      <h2>{userDetails?.name ?? 'Unknown user'}</h2>
-      <h3>added blogs</h3>
-      <ul>
-        {userDetails &&
-          userDetails?.blogs &&
-          userDetails.blogs.length > 0 &&
-          userDetails.blogs.map((blog) => <li key={blog.url}>{blog.title}</li>)}
-      </ul>
+      {!userDetails ? (
+        <Loading />
+      ) : (
+        <>
+          <h2>{userDetails.name ?? ''}</h2>
+          <h3>added blogs</h3>
+          {userDetails.blogs && userDetails.blogs.length > 0 ? (
+            <ul>
+              {userDetails.blogs.map((blog) => (
+                <li key={blog.url}>{blog.title}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>No blogs found</p>
+          )}
+        </>
+      )}
     </div>
   );
 };
