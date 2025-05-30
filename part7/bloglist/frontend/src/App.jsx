@@ -13,6 +13,7 @@ import UserDetails from './components/UserDetails';
 import BlogDetails from './components/BlogDetails';
 import Navbar from './components/Navbar';
 import { setInitialUsers } from './store/reducers/usersReducer';
+import { Container } from '@mui/material';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -22,7 +23,7 @@ const App = () => {
 
   const handleLogin = async (credentials) => {
     try {
-      dispatch(loginUser(credentials));
+      await dispatch(loginUser(credentials));
       dispatch(setNotification('logged successfully!', 5));
     } catch (error) {
       console.error({ message: error.response.data.error });
@@ -38,22 +39,22 @@ const App = () => {
   return (
     <div>
       {!user ? (
-        <div>
-          <h2 className="login-title">log in to application</h2>
-          <NotificationMessage type={'error'} message={errors} />
+        <Container>
           <LoginForm handleLogin={handleLogin} />
-        </div>
+        </Container>
       ) : (
         <div>
           <Navbar />
-          <NotificationMessage message={notification} type={''} />
-          <NotificationMessage type={'error'} message={errors} />
-          <Routes>
-            <Route path="/" element={<Blogs />} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/users/:id" element={<UserDetails />} />
-            <Route path="/blogs/:id" element={<BlogDetails />} />
-          </Routes>
+          <Container>
+            <NotificationMessage message={notification} type={''} />
+            <NotificationMessage type={'error'} message={errors} />
+            <Routes>
+              <Route path="/" element={<Blogs />} />
+              <Route path="/users" element={<Users />} />
+              <Route path="/users/:id" element={<UserDetails />} />
+              <Route path="/blogs/:id" element={<BlogDetails />} />
+            </Routes>
+          </Container>
         </div>
       )}
     </div>
