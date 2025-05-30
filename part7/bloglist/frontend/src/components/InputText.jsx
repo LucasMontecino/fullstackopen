@@ -1,25 +1,16 @@
-const InputText = ({
-  htmlFor,
-  label,
-  name,
-  id,
-  value,
-  onChange,
-  autoComplete,
-  type,
-}) => {
+import { TextField } from '@mui/material';
+
+const InputText = ({ name, id, value, onChange, autoComplete, type }) => {
   return (
-    <div>
-      <label htmlFor={htmlFor}>{label}</label>
-      <input
-        type={type}
-        name={name}
-        id={id}
-        value={value}
-        onChange={onChange}
-        autoComplete={autoComplete}
-      />
-    </div>
+    <TextField
+      type={type}
+      name={name}
+      id={id}
+      label={name}
+      value={value}
+      onChange={onChange}
+      autoComplete={autoComplete}
+    />
   );
 };
 

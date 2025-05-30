@@ -1,6 +1,7 @@
 import { useState, useImperativeHandle, forwardRef } from 'react';
 import Button from './Button';
 import PropTypes from 'prop-types';
+import { Box } from '@mui/material';
 
 const Togglable = forwardRef(({ buttonLabel, children }, refs) => {
   const [showVisibility, setShowVisibility] = useState(false);
@@ -20,13 +21,14 @@ const Togglable = forwardRef(({ buttonLabel, children }, refs) => {
         label={buttonLabel}
         onClick={toggleVisibility}
         testid={'show'}
+        color="success"
       />
     );
   }
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         display: 'flex',
         flexDirection: 'column',
         gap: '8px',
@@ -35,13 +37,7 @@ const Togglable = forwardRef(({ buttonLabel, children }, refs) => {
       }}
     >
       {children}
-      <Button
-        type={'button'}
-        label={'cancel'}
-        onClick={toggleVisibility}
-        testid={'cancel'}
-      />
-    </div>
+    </Box>
   );
 });
 

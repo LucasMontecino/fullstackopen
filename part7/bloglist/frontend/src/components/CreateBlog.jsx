@@ -1,13 +1,18 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import InputText from './InputText';
 import Button from './Button';
+import { Box, Typography } from '@mui/material';
 
-const CreateBlog = ({ createBlog }) => {
+const CreateBlog = ({ createBlog, blogFormRef }) => {
   const [newBlog, setNewBlog] = useState({
     title: '',
     author: '',
     url: '',
   });
+
+  const handleClick = () => {
+    blogFormRef.current.toggleVisibility();
+  };
 
   const handleNewBlog = (e) => {
     setNewBlog((prev) => ({
@@ -30,9 +35,29 @@ const CreateBlog = ({ createBlog }) => {
 
   return (
     <div>
-      <h2>create new</h2>
-      <form onSubmit={addBlog}>
-        <div style={{ marginBottom: '6px' }}>
+      <Typography variant="h5" sx={{ marginBottom: 1 }}>
+        Create new
+      </Typography>
+      <Box
+        component={'form'}
+        onSubmit={addBlog}
+        sx={{
+          '& .MuiTextField-root': {
+            mr: {
+              xs: 0,
+              md: 1,
+            },
+            width: '40ch',
+            my: {
+              xs: 2,
+              lg: 0,
+            },
+          },
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <Box sx={{ marginBottom: 2 }}>
           <InputText
             htmlFor={'title'}
             label={'title:'}
@@ -63,9 +88,31 @@ const CreateBlog = ({ createBlog }) => {
             autoComplete={'url'}
             type={'text'}
           />
-        </div>
-        <Button type={'submit'} label={'create'} testid={'create'} />
-      </form>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 2,
+            justifyContent: 'stretch',
+          }}
+        >
+          <Button
+            type={'submit'}
+            label={'create'}
+            testid={'create'}
+            color="success"
+            sx={{ flexGrow: 0 }}
+          />
+          <Button
+            type={'button'}
+            label={'cancel'}
+            testid={'cancel'}
+            color="error"
+            onClick={handleClick}
+            sx={{ flexGrow: 0 }}
+          />
+        </Box>
+      </Box>
     </div>
   );
 };

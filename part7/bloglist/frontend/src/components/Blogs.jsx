@@ -7,6 +7,18 @@ import { setNotification } from '../store/reducers/notificationReducer';
 import { setError } from '../store/reducers/errorReducer';
 import { useRef } from 'react';
 import Loading from './Loading';
+import {
+  Box,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material';
+import MyTable from './MyTable';
 
 const Blogs = () => {
   const dispatch = useDispatch();
@@ -48,22 +60,44 @@ const Blogs = () => {
     }
   };
 
+  const tableHeads = [
+    {
+      id: 1,
+      label: 'Title',
+    },
+    {
+      id: 2,
+      label: 'Author',
+    },
+    {
+      id: 3,
+      label: 'N° Of Comments',
+      align: 'right',
+    },
+  ];
+
   return (
-    <>
-      <h2>blog app</h2>
+    <Box>
+      <Typography variant="h2" sx={{ marginBottom: 2 }}>
+        Blog App
+      </Typography>
       <Togglable buttonLabel={'create new blog'} ref={blogFormRef}>
-        <CreateBlog createBlog={handleAddBlog} />
+        <CreateBlog createBlog={handleAddBlog} blogFormRef={blogFormRef} />
       </Togglable>
-      {blogs.length === 0 ? (
+      {!blogs ? (
         <Loading />
+      ) : !blogs.length ? (
+        <Typography variant="body1" sx={{ marginTop: 2 }}>
+          No blogs found
+        </Typography>
       ) : (
-        <div style={{ marginTop: '6px' }}>
+        <MyTable tableHeads={tableHeads}>
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
           ))}
-        </div>
+        </MyTable>
       )}
-    </>
+    </Box>
   );
 };
 

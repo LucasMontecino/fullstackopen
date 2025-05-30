@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import Button from './Button';
-import { useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   appendBlog,
@@ -12,6 +12,15 @@ import { setNotification } from '../store/reducers/notificationReducer';
 import { setError } from '../store/reducers/errorReducer';
 import CreateComment from './CreateComment';
 import Loading from './Loading';
+import {
+  Box,
+  Divider,
+  Link,
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+} from '@mui/material';
 
 const BlogDetails = () => {
   const { id } = useParams();
@@ -44,45 +53,67 @@ const BlogDetails = () => {
   };
 
   return (
-    <div>
+    <Box>
       {!blogDetails ? (
         <Loading />
       ) : (
         <>
-          <h2>{blogDetails.title ?? ''}</h2>
-          <a
-            href={blogDetails.url ?? ''}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Typography variant="h3">{blogDetails.title ?? ''}</Typography>
+
+          <Box
+            sx={{ display: 'flex', alignItems: 'center', columnGap: 2, my: 2 }}
           >
-            {blogDetails.url ?? ''}
-          </a>
-          <div>
-            <span>{blogDetails.likes ?? 0} likes</span>
+            <Typography variant="body1">
+              {blogDetails.likes ?? 0} likes
+            </Typography>
             <Button
               label={'like'}
               type={'button'}
               onClick={() => updateBlog(blogDetails.id)}
+              size="small"
+              variant="outlined"
             />
-          </div>
-          <p>added by {blogDetails.user?.name ?? ''}</p>
-          <h3>comments</h3>
-          <CreateComment
-            blogId={blogDetails.id}
-            blogTitle={blogDetails.title}
-          />
-          {blogDetails.comments && blogDetails.comments.length > 0 ? (
-            <ul>
-              {blogDetails.comments.map((comment) => (
-                <li key={comment.id}>{comment.content}</li>
-              ))}
-            </ul>
-          ) : (
-            <p>this blog doesnt have any comments yet</p>
-          )}
+          </Box>
+          <Link
+            href={blogDetails.url ?? ''}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {'Visit site'}
+          </Link>
+          <Typography variant="caption" sx={{ display: 'block', mt: 2 }}>
+            added by {blogDetails.user?.name ?? ''}
+          </Typography>
+          <Box sx={{ marginTop: 2 }}>
+            <Typography variant="h5" gutterBottom>
+              comments
+            </Typography>
+            <CreateComment
+              blogId={blogDetails.id}
+              blogTitle={blogDetails.title}
+            />
+            {blogDetails.comments && blogDetails.comments.length > 0 ? (
+              <Box sx={{ width: '100%' }}>
+                <List>
+                  {blogDetails.comments.map((comment) => (
+                    <Fragment key={comment.id}>
+                      <ListItem>
+                        <ListItemText primary={comment.content} />
+                      </ListItem>
+                      <Divider />
+                    </Fragment>
+                  ))}
+                </List>
+              </Box>
+            ) : (
+              <Typography variant="body2" sx={{ mt: 2 }}>
+                This blog doesnt have any comments yet
+              </Typography>
+            )}
+          </Box>
         </>
       )}
-    </div>
+    </Box>
   );
 };
 

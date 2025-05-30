@@ -1,8 +1,16 @@
-import { useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser, appendUser } from '../store/reducers/userDetailsReducer';
 import Loading from './Loading';
+import {
+  Box,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+} from '@mui/material';
 
 const UserDetails = () => {
   const { id } = useParams();
@@ -17,25 +25,34 @@ const UserDetails = () => {
     };
   }, [dispatch, id]);
   return (
-    <div>
+    <Box>
       {!userDetails ? (
         <Loading />
       ) : (
         <>
-          <h2>{userDetails.name ?? ''}</h2>
-          <h3>added blogs</h3>
+          <Typography variant="h2">{userDetails.name ?? ''}</Typography>
+          <Typography variant="h4" sx={{ marginTop: 2, marginBottom: 2 }}>
+            added blogs
+          </Typography>
           {userDetails.blogs && userDetails.blogs.length > 0 ? (
-            <ul>
-              {userDetails.blogs.map((blog) => (
-                <li key={blog.url}>{blog.title}</li>
-              ))}
-            </ul>
+            <Box sx={{ width: '100%' }}>
+              <List>
+                {userDetails.blogs.map((blog) => (
+                  <Fragment key={blog.url}>
+                    <ListItem>
+                      <ListItemText primary={blog.title} />
+                    </ListItem>
+                    <Divider />
+                  </Fragment>
+                ))}
+              </List>
+            </Box>
           ) : (
             <p>No blogs found</p>
           )}
         </>
       )}
-    </div>
+    </Box>
   );
 };
 

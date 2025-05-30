@@ -4,6 +4,8 @@ import { setNewComment } from '../store/reducers/blogDetailsReducer';
 import { useDispatch } from 'react-redux';
 import { setNotification } from '../store/reducers/notificationReducer';
 import { setError } from '../store/reducers/errorReducer';
+import InputText from './InputText';
+import { Box } from '@mui/material';
 
 const CreateComment = ({ blogId, blogTitle }) => {
   const [content, setContent] = useState('');
@@ -31,8 +33,19 @@ const CreateComment = ({ blogId, blogTitle }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
+    <Box
+      component={'form'}
+      onSubmit={handleSubmit}
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'stretch',
+        rowGap: 2,
+        width: '100%',
+        maxWidth: 400,
+      }}
+    >
+      <InputText
         type="text"
         autoComplete="off"
         value={content}
@@ -42,7 +55,7 @@ const CreateComment = ({ blogId, blogTitle }) => {
         name="comment"
       />
       <Button type={'submit'} label={'add comment'} />
-    </form>
+    </Box>
   );
 };
 
