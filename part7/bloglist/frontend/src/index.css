@@ -1,3 +1,6 @@
-.blog + .blog {
-  margin-top: 6px;
+*,
+*::after,
+*::before {
+  margin: 0;
+  box-sizing: border-box;
 }
