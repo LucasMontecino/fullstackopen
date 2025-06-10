@@ -15,6 +15,7 @@ const EditAuthor = ({ name, year, setAuthorToEdit }) => {
     onError: (error) => {
       console.error({ error: error.message });
       setMessage(setError, error.message);
+      setBorn(year || 'null');
     },
   });
 
