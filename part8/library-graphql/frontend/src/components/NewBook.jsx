@@ -1,5 +1,10 @@
 import { useContext, useState } from 'react';
-import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from '../queries';
+import {
+  ALL_AUTHORS,
+  ALL_BOOKS,
+  ALL_BOOKS_BY_GENRE,
+  CREATE_BOOK,
+} from '../queries';
 import { useMutation } from '@apollo/client';
 import setMessage from '../utils/setMessage';
 import { NotificationsContext } from '../context/NotificationsContext';
@@ -15,7 +20,11 @@ const NewBook = () => {
   const [genre, setGenre] = useState('');
 
   const [addBook] = useMutation(CREATE_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+    refetchQueries: [
+      { query: ALL_BOOKS_BY_GENRE },
+      { query: ALL_BOOKS },
+      { query: ALL_AUTHORS },
+    ],
     errorPolicy: 'none',
     onError: (error) => {
       console.error({ error: error.message });
