@@ -21,6 +21,7 @@ const typeDefs = `
     name: String!
     id: ID!
     born: Int
+    books: [Book]
     bookCount: Int!
   }
 
@@ -55,8 +56,8 @@ const typeDefs = `
   }
 
   type Subscription {
-    createUser: User!
-  }    
+    bookAdded: Book!
+  }
 `;
 
 module.exports = typeDefs;

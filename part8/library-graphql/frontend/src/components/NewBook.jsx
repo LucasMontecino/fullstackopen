@@ -1,16 +1,12 @@
 import { useContext, useState } from 'react';
-import {
-  ALL_AUTHORS,
-  ALL_BOOKS,
-  ALL_BOOKS_BY_GENRE,
-  CREATE_BOOK,
-} from '../queries';
+import { ALL_BOOKS, CREATE_BOOK } from '../queries';
 import { useMutation } from '@apollo/client';
 import setMessage from '../utils/setMessage';
 import { NotificationsContext } from '../context/NotificationsContext';
+import { updateCache } from '../utils/updateCache';
 
 const NewBook = () => {
-  const { setError, setNotification } = useContext(NotificationsContext);
+  const { setError } = useContext(NotificationsContext);
   const [book, setBook] = useState({
     title: '',
     author: '',
@@ -19,16 +15,13 @@ const NewBook = () => {
   });
   const [genre, setGenre] = useState('');
 
-  const [addBook] = useMutation(CREATE_BOOK, {
-    refetchQueries: [
-      { query: ALL_BOOKS_BY_GENRE },
-      { query: ALL_BOOKS },
-      { query: ALL_AUTHORS },
-    ],
-    errorPolicy: 'none',
+  const [createBook] = useMutation(CREATE_BOOK, {
     onError: (error) => {
       console.error({ error: error.message });
       setMessage(setError, error.message);
+    },
+    update: (cache, res) => {
+      updateCache(cache, { query: ALL_BOOKS }, res.data.addBook);
     },
   });
 
@@ -37,13 +30,11 @@ const NewBook = () => {
 
   const submit = async (event) => {
     event.preventDefault();
-    const result = await addBook({
+    const result = await createBook({
       variables: { ...book, published: parseInt(book.published) },
     });
 
     if (result.errors) return;
-
-    setMessage(setNotification, `new book: ${book.title} added successfully!`);
 
     setBook({
       title: '',

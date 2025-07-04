@@ -17,14 +17,37 @@ const Authors = () => {
         <table>
           <tbody>
             <tr>
-              <th></th>
+              <th>author name</th>
               <th>born</th>
               <th>books</th>
             </tr>
             {authors.map((a) => (
-              <tr key={a.id}>
-                <td>{a.name}</td>
-                <td onClick={() => setAuthorToEdit(a.name)}>
+              <tr
+                key={a.id}
+                style={{
+                  borderBottom: '2px solid #000',
+                  borderRight: '2px solid #000',
+                  borderLeft: '2px solid #000',
+                }}
+              >
+                <td
+                  style={{
+                    paddingRight: 20,
+                    paddingLeft: 6,
+                    borderRight: '2px solid #000',
+                  }}
+                >
+                  {a.name}
+                </td>
+                <td
+                  onClick={() => setAuthorToEdit(a.name)}
+                  style={{
+                    textAlign: 'right',
+                    paddingLeft: 36,
+                    paddingRight: 6,
+                    borderRight: '2px solid #000',
+                  }}
+                >
                   {authorToEdit === a.name ? (
                     <EditAuthor
                       name={a.name}
@@ -35,7 +58,9 @@ const Authors = () => {
                     a.born || 'null'
                   )}
                 </td>
-                <td>{a.bookCount}</td>
+                <td style={{ textAlign: 'right', paddingRight: 6 }}>
+                  {a.bookCount}
+                </td>
               </tr>
             ))}
           </tbody>

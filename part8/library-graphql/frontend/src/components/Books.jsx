@@ -1,49 +1,45 @@
 import { useQuery } from '@apollo/client';
-import { ALL_BOOKS, ALL_BOOKS_BY_GENRE } from '../queries';
+import { ALL_BOOKS } from '../queries';
 import { useState } from 'react';
 import BookTable from './BookTable';
 import Genres from './Genres';
 
 const Books = () => {
   const [filter, setFilter] = useState('');
-  const { data } = useQuery(ALL_BOOKS);
-  const { data: filterData, loading: filterDataLoading } = useQuery(
-    ALL_BOOKS_BY_GENRE,
-    {
-      variables: { genre: filter },
-    }
-  );
+  const { data, loading } = useQuery(ALL_BOOKS);
 
   const books = data?.allBooks || [];
-  const booksFilter = filterData?.allBooks || [];
 
-  const genres =
-    books &&
-    books
-      .reduce((acc, el) => {
-        el.genres.forEach((item) => {
-          if (!acc.includes(item)) {
-            acc.push(item);
-          }
-        });
-        return acc;
-      }, [])
-      .concat('all genres');
+  const filteredBooks =
+    filter === '' || filter === 'all genres'
+      ? books
+      : books.filter((book) => book.genres.includes(filter));
+
+  const genres = books
+    .reduce((acc, el) => {
+      el.genres.forEach((genre) => {
+        if (!acc.includes(genre)) {
+          acc.push(genre);
+        }
+      });
+      return acc;
+    }, [])
+    .concat('all genres');
 
   const handleClick = (genre) => {
-    setFilter(genre);
+    setFilter(genre === 'all genres' ? '' : genre);
   };
 
   return (
     <div>
       <h2>books</h2>
       <p>
-        in genre <strong>{!filter ? 'all genres' : filter}</strong>
+        in genre <strong>{filter || 'all genres'}</strong>
       </p>
-      {filterDataLoading ? (
+      {loading ? (
         <p>Loading...</p>
       ) : (
-        <BookTable books={booksFilter}>
+        <BookTable books={filteredBooks}>
           <Genres genres={genres} handleClick={handleClick} />
         </BookTable>
       )}

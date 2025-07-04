@@ -6,15 +6,40 @@ const BookTable = ({ children, books }) => {
       <table>
         <tbody>
           <tr>
-            <th></th>
+            <th>title</th>
             <th>author</th>
             <th>published</th>
           </tr>
           {books.map((a) => (
-            <tr key={a.id}>
-              <td>{a.title}</td>
-              <td>{a.author.name}</td>
-              <td>{a.published}</td>
+            <tr
+              key={a.id}
+              style={{
+                borderBottom: '2px solid #000',
+                borderRight: '2px solid #000',
+                borderLeft: '2px solid #000',
+              }}
+            >
+              <td
+                style={{
+                  paddingRight: 20,
+                  paddingLeft: 6,
+                  borderRight: '2px solid #000',
+                }}
+              >
+                {a.title}
+              </td>
+              <td
+                style={{
+                  paddingRight: 20,
+                  paddingLeft: 6,
+                  borderRight: '2px solid #000',
+                }}
+              >
+                {a.author.name}
+              </td>
+              <td style={{ textAlign: 'right', paddingRight: 6 }}>
+                {a.published}
+              </td>
             </tr>
           ))}
         </tbody>

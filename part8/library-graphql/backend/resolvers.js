@@ -5,6 +5,8 @@ const User = require('./models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { SECRET_KEY } = require('./utils/config');
+const { PubSub } = require('graphql-subscriptions');
+const pubsub = new PubSub();
 
 const resolvers = {
   Query: {
@@ -39,15 +41,18 @@ const resolvers = {
         });
       }
     },
-    allAuthors: async () => await Author.find({}),
+    allAuthors: async () => {
+      console.log('Author.find');
+      return await Author.find({}).populate('books');
+    },
     me: (root, args, context) => {
       return context.currentUser;
     },
   },
   Author: {
     bookCount: async (root) => {
-      const findBooks = await Book.find({ author: root.id });
-      return findBooks.length;
+      console.log('Book.find');
+      return root.books.length;
     },
   },
 
@@ -95,6 +100,10 @@ const resolvers = {
           },
         });
       }
+      pubsub.publish('BOOK_ADDED', {
+        bookAdded: book.populate('author', { name: 1, born: 1, bookCount: 1 }),
+      });
+
       return book.populate('author', { name: 1, born: 1, bookCount: 1 });
     },
     editAuthor: async (root, args, context) => {
@@ -170,6 +179,11 @@ const resolvers = {
       return {
         value: token,
       };
+    },
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterableIterator(['BOOK_ADDED']),
     },
   },
 };
