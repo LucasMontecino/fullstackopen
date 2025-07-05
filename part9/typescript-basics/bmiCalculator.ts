@@ -19,7 +19,7 @@ const parseArguments = (args: string[]): BmiValues => {
   }
 };
 
-const calculateBmi = (height: number, weight: number): string => {
+export const calculateBmi = (height: number, weight: number): string => {
   const result = weight / ((height / 100) * (height / 100));
   return result < 18.5
     ? 'Underweight'
