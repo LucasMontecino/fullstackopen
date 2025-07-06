@@ -28,13 +28,14 @@ const parseArguments = (args: string[]): ExerciseValues => {
   }
 };
 
-const calculateExercises = (
+export const calculateExercises = (
   dailyExercises: number[],
   target: number
 ): Result => {
   const greatherThanZero = (value: number): boolean => value > 0;
   const average: number =
-    dailyExercises.reduce((acc, el) => acc + el, 0) / dailyExercises.length;
+    dailyExercises.reduce((acc, el) => acc + Number(el), 0) /
+    dailyExercises.length;
 
   const rating: number =
     average >= target ? 3 : average < target && average >= target * 0.5 ? 2 : 1;
@@ -50,19 +51,21 @@ const calculateExercises = (
         : rating === 2
         ? 'not too bad but could be better'
         : "don't give up tiger, try to focus next time!",
-    target,
+    target: Number(target),
     average,
   };
 };
 
-try {
-  const { target, exercises } = parseArguments(process.argv);
-  const myResult = calculateExercises(exercises, target);
-  console.log(myResult);
-} catch (error: unknown) {
-  let errMsg = 'Sth went wrong: ';
-  if (error instanceof Error) {
-    errMsg += error.message;
+if (require.main === module) {
+  try {
+    const { target, exercises } = parseArguments(process.argv);
+    const myResult = calculateExercises(exercises, target);
+    console.log(myResult);
+  } catch (error: unknown) {
+    let errMsg = 'Sth went wrong: ';
+    if (error instanceof Error) {
+      errMsg += error.message;
+    }
+    console.error({ error: errMsg });
   }
-  console.error({ error: errMsg });
 }
