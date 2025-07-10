@@ -1,8 +1,8 @@
-import type { IContent } from '../types';
-import CoursePart from './CoursePart';
+import type { CoursePart } from '../types';
+import Part from './Part';
 
-const Content = ({ courses }: { courses: IContent[] }) => {
-  return courses.map((c) => <CoursePart course={c} key={c.name} />);
+const Content = ({ courses }: { courses: CoursePart[] }) => {
+  return courses.map((c) => <Part course={c} key={c.name} />);
 };
 
 export default Content;
