@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import diagnosisRouter from './routes/diagnosisRouter';
 import patientRouter from './routes/patientRouter';
+import { errorHandler, unknownEndpoint } from './middlewares';
 
 const app = express();
 
@@ -15,6 +16,9 @@ app.get('/api/ping', (_req, res) => {
 
 app.use('/api/diagnoses', diagnosisRouter);
 app.use('/api/patients', patientRouter);
+
+app.use(unknownEndpoint);
+app.use(errorHandler);
 
 const PORT = 3001;
 
