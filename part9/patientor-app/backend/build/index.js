@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const diagnosisRouter_1 = __importDefault(require("./routes/diagnosisRouter"));
 const patientRouter_1 = __importDefault(require("./routes/patientRouter"));
+const middlewares_1 = require("./middlewares");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)({ origin: '*' }));
@@ -16,6 +17,8 @@ app.get('/api/ping', (_req, res) => {
 });
 app.use('/api/diagnoses', diagnosisRouter_1.default);
 app.use('/api/patients', patientRouter_1.default);
+app.use(middlewares_1.unknownEndpoint);
+app.use(middlewares_1.errorHandler);
 const PORT = 3001;
 app.listen(PORT, () => {
     console.log(`Server listening on port: http://localhost:${PORT}`);
