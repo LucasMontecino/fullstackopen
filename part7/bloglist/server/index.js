@@ -1,9 +1,18 @@
-const config = require('./utils/config');
+const { PORT } = require('./utils/config');
 const logger = require('./utils/logger');
 const app = require('./app');
+const connectDB = require('./db');
 
-const PORT = config.PORT;
+const port = PORT ?? 3001;
 
-app.listen(PORT, () => {
-  logger.info(`Server running on port http://localhost:${PORT}`);
+const startServer = async () => {
+  await connectDB();
+  app.listen(port, () => {
+    logger.info(`Server running on port http://localhost:${port}`);
+  });
+};
+
+startServer().catch((err) => {
+  console.error('Failed to start server', err);
+  process.exit(1);
 });
