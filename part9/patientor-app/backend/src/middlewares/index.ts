@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { ZodError } from 'zod';
-import { NewPatientSchema } from '../schemas';
+import { DiscriminatedEntries, NewPatientSchema } from '../schemas';
 
 export const newDiaryParser = (
   req: Request,
@@ -9,6 +9,19 @@ export const newDiaryParser = (
 ) => {
   try {
     NewPatientSchema.parse(req.body);
+    next();
+  } catch (error: unknown) {
+    next(error);
+  }
+};
+
+export const newEntryParser = (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) => {
+  try {
+    DiscriminatedEntries.parse(req.body);
     next();
   } catch (error: unknown) {
     next(error);
