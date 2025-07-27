@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import Blog from '../models/Blog';
+import { Blog } from '../models';
 
-export const getAll = async (
+export const getBlogs = async (
   _req: Request,
   res: Response,
   next: NextFunction
@@ -14,7 +14,7 @@ export const getAll = async (
   }
 };
 
-export const create = async (
+export const createBlog = async (
   req: Request<unknown, unknown, Blog>,
   res: Response,
   next: NextFunction
@@ -27,7 +27,7 @@ export const create = async (
   }
 };
 
-export const findById = async (
+export const findBlogById = async (
   req: Request<{ id: string }>,
   res: Response<Blog | null | { error: string }>,
   next: NextFunction
@@ -43,7 +43,7 @@ export const findById = async (
   }
 };
 
-export const update = async (
+export const updateBlog = async (
   req: Request<{ id: string }, unknown, Blog>,
   res: Response,
   next: NextFunction
@@ -63,7 +63,7 @@ export const update = async (
   }
 };
 
-export const remove = async (
+export const removeBlog = async (
   req: Request<{ id: string }>,
   res: Response<Blog | string | null | { error: string }>,
   next: NextFunction

@@ -1,20 +1,21 @@
 import express from 'express';
 import {
-  create,
-  findById,
-  getAll,
-  remove,
-  update,
+  createBlog,
+  findBlogById,
+  getBlogs,
+  removeBlog,
+  updateBlog,
 } from '../controllers/blogController';
+import { newBlogParser } from '../utils/middlewares';
 
 export const blogRoute = express.Router();
 
-blogRoute.get('/', getAll);
+blogRoute.get('/', getBlogs);
 
-blogRoute.post('/', create);
+blogRoute.post('/', newBlogParser, createBlog);
 
-blogRoute.get('/:id', findById);
+blogRoute.get('/:id', findBlogById);
 
-blogRoute.put('/:id', update);
+blogRoute.put('/:id', updateBlog);
 
-blogRoute.delete('/:id', remove);
+blogRoute.delete('/:id', removeBlog);

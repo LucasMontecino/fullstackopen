@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { NewBlogSchema } from '../schemas';
+import { NewBlogSchema, NewUserSchema } from '../schemas';
+import { ZodError } from 'zod';
 
 export const newBlogParser = (
   req: Request,
@@ -8,6 +9,19 @@ export const newBlogParser = (
 ) => {
   try {
     NewBlogSchema.parse(req.body);
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const newUserParser = (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) => {
+  try {
+    NewUserSchema.parse(req.body);
     next();
   } catch (error) {
     next(error);
@@ -25,11 +39,12 @@ export const errorHandler = (
   res: Response,
   _next: NextFunction
 ) => {
-  if (error instanceof Error) {
-    res.status(400).json({ error: error.message });
-    return;
-  } else {
-    res.status(500).json({ error: 'unknown error' });
-    return;
+  if (error instanceof ZodError) {
+    return res.status(400).json({ error: error.issues });
   }
+
+  if (error instanceof Error) {
+    return res.status(400).json({ error: error.message });
+  }
+  return res.status(500).json({ error: 'unknown error' });
 };

@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { errorHandler, unknownEndpoint } from './utils/middlewares';
 import { blogRoute } from './routes/blogRoute';
+import { userRoute } from './routes/userRoute';
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.get('/ping', (_req: Request, res: Response) => {
 });
 
 app.use('/api/blogs', blogRoute);
+app.use('/api/users', userRoute);
 
 app.use(unknownEndpoint);
 app.use(errorHandler);

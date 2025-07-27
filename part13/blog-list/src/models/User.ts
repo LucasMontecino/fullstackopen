@@ -5,45 +5,45 @@ import {
   CreationOptional,
   DataTypes,
 } from 'sequelize';
+
 import { sequelize } from '../utils/db';
 
-class Blog extends Model<InferAttributes<Blog>, InferCreationAttributes<Blog>> {
+class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare id: CreationOptional<number>;
-  declare author?: string;
-  declare url: string;
-  declare title: string;
-  declare likes: number;
+  declare name: string;
+  declare username: string;
+  declare passwordHash: string;
 }
 
-Blog.init(
+User.init(
   {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
-    author: {
-      type: DataTypes.STRING,
-    },
-    url: {
+    name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    title: {
+    username: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
+      },
     },
-    likes: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
+    passwordHash: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
   },
   {
     sequelize,
-    timestamps: false,
     underscored: true,
-    modelName: 'blog',
+    modelName: 'user',
   }
 );
 
-export default Blog;
+export default User;
