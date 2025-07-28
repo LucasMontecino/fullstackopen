@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { Blog } from '../models';
+import { Blog, User } from '../models';
 
 export const getBlogs = async (
   _req: Request,
@@ -7,7 +7,14 @@ export const getBlogs = async (
   next: NextFunction
 ) => {
   try {
-    const blogs = await Blog.findAll({ order: [['id', 'ASC']] });
+    const blogs = await Blog.findAll({
+      order: [['id', 'ASC']],
+      attributes: { exclude: ['userId'] },
+      include: {
+        model: User,
+        attributes: ['name', 'username'],
+      },
+    });
     return res.status(200).json(blogs);
   } catch (error) {
     return next(error);
@@ -20,7 +27,11 @@ export const createBlog = async (
   next: NextFunction
 ) => {
   try {
-    const blog = await Blog.create(req.body);
+    const user = await User.findByPk(req.decodedToken.id);
+
+    if (!user) throw new Error('userId missing or not valid');
+
+    const blog = await Blog.create({ ...req.body, userId: user.id });
     return res.status(201).json(blog);
   } catch (error) {
     return next(error);
@@ -34,7 +45,13 @@ export const findBlogById = async (
 ) => {
   try {
     const { id } = req.params;
-    const blog = await Blog.findByPk(id);
+    const blog = await Blog.findByPk(id, {
+      attributes: { exclude: ['userId'] },
+      include: {
+        model: User,
+        attributes: ['name', 'username'],
+      },
+    });
     return blog
       ? res.json(blog)
       : res.status(404).json({ error: 'blog not found' });
@@ -72,6 +89,10 @@ export const removeBlog = async (
     const { id } = req.params;
     const blog = await Blog.findByPk(id);
     if (!blog) return res.status(404).json({ error: 'blog not found' });
+
+    if (blog.userId && req.decodedToken.id !== blog.userId)
+      return res.status(401).json({ error: 'invalid token or user id' });
+
     await blog.destroy();
     return res.json(`Blog ${blog.title} deleted!`);
   } catch (error) {

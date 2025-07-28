@@ -1,7 +1,7 @@
 import { QueryTypes, Sequelize } from 'sequelize';
 import config from './config';
 import logger from './logger';
-import { Blog } from '../types';
+import { Blog } from '../types/types';
 
 export const sequelize = new Sequelize(config.DATABASE_URL);
 

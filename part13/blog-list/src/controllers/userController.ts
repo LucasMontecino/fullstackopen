@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { User } from '../models';
+import { Blog, User } from '../models';
 import bcrypt from 'bcrypt';
 import { z } from 'zod';
 
@@ -31,6 +31,10 @@ export const getUsers = async (
   try {
     const users = await User.findAll({
       attributes: { exclude: ['passwordHash'] },
+      include: {
+        model: Blog,
+        attributes: ['id', 'author', 'title', 'likes'],
+      },
     });
     return res.json(users);
   } catch (error) {

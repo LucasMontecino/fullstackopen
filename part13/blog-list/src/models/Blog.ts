@@ -4,8 +4,10 @@ import {
   InferCreationAttributes,
   CreationOptional,
   DataTypes,
+  ForeignKey,
 } from 'sequelize';
 import { sequelize } from '../utils/db';
+import User from './User';
 
 class Blog extends Model<InferAttributes<Blog>, InferCreationAttributes<Blog>> {
   declare id: CreationOptional<number>;
@@ -13,6 +15,8 @@ class Blog extends Model<InferAttributes<Blog>, InferCreationAttributes<Blog>> {
   declare url: string;
   declare title: string;
   declare likes: number;
+
+  declare userId: ForeignKey<User['id']>;
 }
 
 Blog.init(
