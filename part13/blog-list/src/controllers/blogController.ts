@@ -1,19 +1,44 @@
 import { NextFunction, Request, Response } from 'express';
 import { Blog, User } from '../models';
+import { Op, WhereOptions } from 'sequelize';
+
+interface QueryParams {
+  search?: string;
+}
 
 export const getBlogs = async (
-  _req: Request,
-  res: Response,
+  req: Request,
+  res: Response<Blog[]>,
   next: NextFunction
 ) => {
   try {
+    const { search } = req.query as QueryParams;
+
+    const where: WhereOptions<Blog> = search
+      ? {
+          [Op.or]: [
+            {
+              title: {
+                [Op.iLike]: `%${search}%`,
+              },
+            },
+            {
+              author: {
+                [Op.iLike]: `%${search}%`,
+              },
+            },
+          ],
+        }
+      : {};
+
     const blogs = await Blog.findAll({
-      order: [['id', 'ASC']],
+      order: [['likes', 'DESC']],
       attributes: { exclude: ['userId'] },
       include: {
         model: User,
         attributes: ['name', 'username'],
       },
+      where,
     });
     return res.status(200).json(blogs);
   } catch (error) {
