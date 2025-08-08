@@ -7,6 +7,7 @@
     "dev": "ts-node-dev src/index.ts",
     "lint": "eslint .",
     "tsc": "tsc",
+    "migration:down": "ts-node-dev src/utils/rollback.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Lucas Montecino",
@@ -30,6 +31,7 @@
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.16.3",
     "sequelize": "^6.37.7",
+    "umzug": "^3.8.2",
     "zod": "^4.0.5"
   }
 }

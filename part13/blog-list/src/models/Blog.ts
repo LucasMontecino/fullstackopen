@@ -16,6 +16,11 @@ class Blog extends Model<InferAttributes<Blog>, InferCreationAttributes<Blog>> {
   declare title: string;
   declare likes: number;
 
+  declare createdAt: CreationOptional<Date>;
+  declare updatedAt: CreationOptional<Date>;
+
+  declare year?: number;
+
   declare userId: ForeignKey<User['id']>;
 }
 
@@ -41,10 +46,19 @@ Blog.init(
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE,
+    year: {
+      type: DataTypes.INTEGER,
+      defaultValue: new Date().getFullYear(),
+      validate: {
+        min: 1991,
+        max: new Date().getFullYear(),
+      },
+    },
   },
   {
     sequelize,
-    timestamps: false,
     underscored: true,
     modelName: 'blog',
   }
