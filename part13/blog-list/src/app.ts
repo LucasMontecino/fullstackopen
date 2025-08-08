@@ -4,6 +4,7 @@ import { blogRoute } from './routes/blogRoute';
 import { userRoute } from './routes/userRoute';
 import { loginRoute } from './routes/loginRoute';
 import { authorRoute } from './routes/authorRoute';
+import { readingListRoute } from './routes/readingListRoute';
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use('/api/blogs', blogRoute);
 app.use('/api/users', userRoute);
 app.use('/api/login', loginRoute);
 app.use('/api/authors', authorRoute);
+app.use('/api/readinglists', readingListRoute);
 
 app.use(unknownEndpoint);
 app.use(errorHandler);

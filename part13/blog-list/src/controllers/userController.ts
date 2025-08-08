@@ -63,3 +63,27 @@ export const updateUsername = async (
     return next(error);
   }
 };
+
+export const getUserById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await User.findByPk(req.params.id, {
+      attributes: ['name', 'username'],
+      include: {
+        model: Blog,
+        as: 'readed_blogs',
+        attributes: ['id', 'url', 'title', 'author', 'likes', 'year'],
+        through: {
+          attributes: ['readed', 'id'],
+        },
+      },
+    });
+    if (!user) return res.status(404).json({ error: 'user not found' });
+    return res.json(user);
+  } catch (error) {
+    return next(error);
+  }
+};
