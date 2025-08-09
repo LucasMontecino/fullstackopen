@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { Blog, User } from '../models';
 import bcrypt from 'bcrypt';
 import { z } from 'zod';
+import { WhereOptions } from 'sequelize';
 
 export const createUser = async (
   req: Request<unknown, unknown, User & { password: string }>,
@@ -70,6 +71,10 @@ export const getUserById = async (
   next: NextFunction
 ) => {
   try {
+    const { readed } = req.query;
+
+    const where: WhereOptions = readed ? { readed } : {};
+
     const user = await User.findByPk(req.params.id, {
       attributes: ['name', 'username'],
       include: {
@@ -78,6 +83,7 @@ export const getUserById = async (
         attributes: ['id', 'url', 'title', 'author', 'likes', 'year'],
         through: {
           attributes: ['readed', 'id'],
+          where,
         },
       },
     });
