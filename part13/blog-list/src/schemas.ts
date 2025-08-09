@@ -23,3 +23,7 @@ export const SetBlogSchema = z.object({
   userId: z.number(),
   blogId: z.number(),
 });
+
+export const UpdateReadingBlog = z.object({
+  readed: z.boolean(),
+});
