@@ -5,6 +5,7 @@ import { userRoute } from './routes/userRoute';
 import { loginRoute } from './routes/loginRoute';
 import { authorRoute } from './routes/authorRoute';
 import { readingListRoute } from './routes/readingListRoute';
+import { logoutRoute } from './routes/logoutRoute';
 
 const app = express();
 
@@ -17,6 +18,9 @@ app.get('/ping', (_req: Request, res: Response) => {
 app.use('/api/blogs', blogRoute);
 app.use('/api/users', userRoute);
 app.use('/api/login', loginRoute);
+
+app.use('/api/logout', logoutRoute);
+
 app.use('/api/authors', authorRoute);
 app.use('/api/readinglists', readingListRoute);
 

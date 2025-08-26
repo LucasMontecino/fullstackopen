@@ -3,6 +3,7 @@ declare module 'express-serve-static-core' {
     decodedToken: {
       username: string;
       id: number;
+      sessionId: number;
     };
   }
 }

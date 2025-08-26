@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { Blog, User } from '../models';
+import { Blog, Session, User } from '../models';
 import { Op, WhereOptions } from 'sequelize';
 
 interface QueryParams {
@@ -52,6 +52,9 @@ export const createBlog = async (
   next: NextFunction
 ) => {
   try {
+    const session = await Session.findByPk(req.decodedToken.sessionId);
+    if (!session) throw new Error('invalid or missing token');
+
     const user = await User.findByPk(req.decodedToken.id);
 
     if (!user) throw new Error('userId missing or not valid');

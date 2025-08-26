@@ -20,4 +20,5 @@ export interface UserData {
 export interface DecodedToken {
   username: string;
   id: number;
+  sessionId: number;
 }

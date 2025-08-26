@@ -93,3 +93,31 @@ export const getUserById = async (
     return next(error);
   }
 };
+
+export const changeDisabledStatus = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findByPk(id);
+
+    if (!user) return res.status(404).json({ error: 'user not found' });
+
+    user.disabled = !user.disabled;
+
+    await user.save();
+
+    return res.json({
+      id: user.id,
+      name: user.name,
+      username: user.username,
+      disabled: user.disabled,
+      updatedAt: user.updatedAt,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
