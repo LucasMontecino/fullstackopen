@@ -1,0 +1,51 @@
+Script started on 2025-08-28 10:24:18-03:00 [TERM="xterm-256color" TTY="/dev/pts/3" COLUMNS="137" LINES="23"]
+]0;lucas_montecino@DESKTOP-0HGLINC: /mnt/c/Users/Bangho/Desktop/fullstackopen/part12[01;32mlucas_montecino@DESKTOP-0HGLINC[00m:[01;34m/mnt/c/Users/Bangho/Desktop/fullstackopen/part12[00m$ docker cotnaine[K[K[K[K[K[Knta[Kainer run hello-wolrd[K[K[Krld
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+]0;lucas_montecino@DESKTOP-0HGLINC: /mnt/c/Users/Bangho/Desktop/fullstackopen/part12[01;32mlucas_montecino@DESKTOP-0HGLINC[00m:[01;34m/mnt/c/Users/Bangho/Desktop/fullstackopen/part12[00m$ docker run -it nac[K[K[Kubuntu bash
+[?2004h]0;root@44756ae2a988: /root@44756ae2a988:/# ls
+[?2004l[0m[01;36mbin[0m  [01;34mboot[0m  [01;34mdev[0m  [01;34metc[0m  [01;34mhome[0m  [01;36mlib[0m  [01;36mlib64[0m  [01;34mmedia[0m  [01;34mmnt[0m  [01;34mopt[0m  [01;34mproc[0m  [01;34mroot[0m  [01;34mrun[0m  [01;36msbin[0m  [01;34msrv[0m  [01;34msys[0m  [30;42mtmp[0m  [01;34musr[0m  [01;34mvar[0m
+[?2004h]0;root@44756ae2a988: /root@44756ae2a988:/# mkdri  ir /s usr/src/app
+[?2004l[?2004h]0;root@44756ae2a988: /root@44756ae2a988:/# ls
+[?2004l[0m[01;36mbin[0m  [01;34mboot[0m  [01;34mdev[0m  [01;34metc[0m  [01;34mhome[0m  [01;36mlib[0m  [01;36mlib64[0m  [01;34mmedia[0m  [01;34mmnt[0m  [01;34mopt[0m  [01;34mproc[0m  [01;34mroot[0m  [01;34mrun[0m  [01;36msbin[0m  [01;34msrv[0m  [01;34msys[0m  [30;42mtmp[0m  [01;34musr[0m  [01;34mvar[0m
+[?2004h]0;root@44756ae2a988: /root@44756ae2a988:/# cd us sr/
+[?2004l[?2004h]0;root@44756ae2a988: /usrroot@44756ae2a988:/usr# cd src/
+[?2004l[?2004h]0;root@44756ae2a988: /usr/srcroot@44756ae2a988:/usr/src# cd app/
+[?2004l[?2004h]0;root@44756ae2a988: /usr/src/approot@44756ae2a988:/usr/src/app# clear
+[?2004l[H[2J[3J[?2004h]0;root@44756ae2a988: /usr/src/approot@44756ae2a988:/usr/src/app# ls
+[?2004l[?2004h]0;root@44756ae2a988: /usr/src/approot@44756ae2a988:/usr/src/app# touch index.js
+[?2004l[?2004h]0;root@44756ae2a988: /usr/src/approot@44756ae2a988:/usr/src/app# ls
+[?2004lindex.js
+[?2004h]0;root@44756ae2a988: /usr/src/approot@44756ae2a988:/usr/src/app# ls -a
+[?2004l[0m[01;34m.[0m  [01;34m..[0m  index.js
+[?2004h]0;root@44756ae2a988: /usr/src/approot@44756ae2a988:/usr/src/app# sl -la      s   ls -la
+[?2004ltotal 8
+drwxr-xr-x 2 root root 4096 Aug 28 13:25 [0m[01;34m.[0m
+drwxr-xr-x 1 root root 4096 Aug 28 13:24 [01;34m..[0m
+-rw-r--r-- 1 root root    0 Aug 28 13:25 index.js
+[?2004h]0;root@44756ae2a988: /usr/src/approot@44756ae2a988:/usr/src/app# exit
+[?2004lexit
+]0;lucas_montecino@DESKTOP-0HGLINC: /mnt/c/Users/Bangho/Desktop/fullstackopen/part12[01;32mlucas_montecino@DESKTOP-0HGLINC[00m:[01;34m/mnt/c/Users/Bangho/Desktop/fullstackopen/part12[00m$ exit
+exit
+
+Script done on 2025-08-28 10:25:31-03:00 [COMMAND_EXIT_CODE="0"]
